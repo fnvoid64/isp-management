@@ -42,17 +42,19 @@
                                 </div>
                                 <div class="detail">
                                     <div class="detail-label">Amount</div>
-                                    <div class="detail-value">BDT {{ $invoice->amount }}</div>
+                                    <div class="detail-value">BDT <b>{{ $invoice->amount }}</b></div>
                                 </div>
                                 <div class="detail">
                                     <div class="detail-label">Due</div>
-                                    <div class="detail-value">BDT {{ $invoice->customer->name }}</div>
+                                    <div class="detail-value">BDT <b class="text-danger">{{ $invoice->due }}</b></div>
                                 </div>
-                                @if ($invoice->payment_id)
+                                @if ($invoice->payments()->count() > 0)
                                 <div class="detail">
                                     <div class="detail-label">Payments Made</div>
                                     <div class="detail-value">
-                                        <a href="">Payemnt #{{ $invoice->payment->id }}</a> BDT {{ $invoice->payment->amount }} at {{ $invoice->payment->created_at->format('d/m/Y') }}
+                                        @foreach($invoice->payments()->get() as $payment)
+                                            <a href="">Payment #{{ $payment->id }}</a> BDT {{ $payment->amount }} at {{ $payment->created_at->format('d/m/Y') }}<br/>
+                                        @endforeach
                                     </div>
                                 </div>
                                 @endif
@@ -73,18 +75,13 @@
                         </div>
                         <div class="col-md-4">
                             <p>
-                                <a href="">
-                                    <button class="btn btn-info btn-block">View Customers</button>
-                                </a>
+                                <button class="btn btn-success btn-block" data-toggle="modal" data-target="#payment">Make Payment</button>
                             </p>
                             <p>
-                                <button class="btn btn-primary btn-block">View Invoices</button>
+                                <button class="btn btn-info btn-block">View Payments</button>
                             </p>
                             <p>
-                                <button class="btn btn-success btn-block">View Payments</button>
-                            </p>
-                            <p>
-                                <button class="btn btn-danger btn-block" data-toggle="modal" data-target="#delete">Delete Package</button>
+                                <button class="btn btn-danger btn-block" data-toggle="modal" data-target="#delete">Cancel Invoice</button>
                             </p>
                         </div>
                     </div>
@@ -92,20 +89,55 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="delete" aria-hidden="true">
+
+    <div class="modal fade" id="payment" tabindex="-1" role="dialog" aria-labelledby="payment" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="delete">Delete Package</h5>
+                    <h5 class="modal-title" id="payment">Make Payment</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method="post" action="{{ route('packages.delete', ['package' => $package->id]) }}">
+                <form method="post" action="{{ route('invoices.pay', ['invoice' => $invoice->id]) }}">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Amount (BDT)</label>
+                            <input type="number" class="form-control" name="amount" placeholder="Payment Amount" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Payment Type</label>
+                            <select name="type" class="form-control">
+                                <option value="{{ \App\Models\Payment::TYPE_CASH }}">Cash</option>
+                                <option value="{{ \App\Models\Payment::TYPE_MOBILE_BANK }}">bKash/Rocket/Nagad Etc</option>
+                                <option value="{{ \App\Models\Payment::TYPE_BANK }}">Bank</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Make Payment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="delete" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="delete">Cancel Invoice</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="post" action="{{ route('invoices.cancel', ['invoice' => $invoice->id]) }}">
                     @csrf
                     @method('DELETE')
                     <div class="modal-body">
-                        <p class="text-danger">Are you sure you want to delete package {{ $package->name }}?</p>
+                        <p class="text-danger">Are you sure you want to cancel this invoice #{{ $invoice->id }}?</p>
                         <div class="form-group">
                             <label>PIN</label>
                             <input type="number" class="form-control" name="pin" placeholder="Account PIN" required>
@@ -113,7 +145,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <button type="submit" class="btn btn-danger">Cancel</button>
                     </div>
                 </form>
             </div>

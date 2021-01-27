@@ -1,21 +1,18 @@
 @extends('layouts.app')
-@section('title', 'Invoices')
+@section('title', 'Payments')
 
 @section('content')
     <div class="row align-items-center">
         <div class="col">
             <div class="page-title-box">
-                <h4 class="font-size-18">Invoices</h4>
+                <h4 class="font-size-18">Payments</h4>
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Invoices</li>
+                    <li class="breadcrumb-item active">Payments</li>
                 </ol>
             </div>
         </div>
     </div>
-
-    @include('includes.messages')
-    @include('includes.errors')
 
     <div class="row">
         <div class="col-12">
@@ -26,7 +23,7 @@
                             <div class="spinner-grow spinner-grow-sm text-success mr-1" role="status" v-if="pageLoading">
                                 <span class="sr-only">Loading...</span>
                             </div>
-                            Invoice List
+                            Payments List
                         </div>
 
                         <div class="col-auto">
@@ -43,8 +40,8 @@
                                 <th>ID</th>
                                 <th>Customer</th>
                                 <th>Amount</th>
-                                <th>Due</th>
-                                <th>Status</th>
+                                <th>Type</th>
+                                <th>Paid By</th>
                                 <th>Actions</th>
                                 </thead>
                                 <tbody>
@@ -54,21 +51,22 @@
                                         <a :href="`/dashboard/customers/${item.customer.id}`">[[ item.customer.name ]]</a>
                                     </td>
                                     <td>BDT [[ item.amount ]]</td>
-                                    <td>BDT [[ item.due ]]</td>
                                     <td>
-                                        <span class="badge badge-success" v-if="item.status == {{ \App\Models\Invoice::STATUS_PAID }}">Paid</span>
-                                        <span class="badge badge-primary" v-else-if="item.status == {{ \App\Models\Invoice::STATUS_PARTIAL_PAID }}">Partially Paid</span>
-                                        <span class="badge badge-danger" v-else-if="item.status == {{ \App\Models\Invoice::STATUS_UNPAID }}">Unpaid</span>
-                                        <span class="badge badge-secondary" v-else>Cancelled</span>
+                                        <span v-if="item.type == {{ \App\Models\Payment::TYPE_CASH }}">Cash</span>
+                                        <span v-else-if="item.type == {{ \App\Models\Payment::TYPE_MOBILE_BANK }}">bKash/Rocket/Nagad Etc</span>
+                                        <span v-else-if="item.type == {{ \App\Models\Payment::TYPE_BANK }}">Bank</span>
                                     </td>
                                     <td>
-                                        <a :href="`/dashboard/invoices/${item.id}`">
+                                        <a :href="`/dashboard/customers/${item.customer.id}`" v-if="item.employee_id">[[ item.customer.name ]]</a>
+                                        <span v-else>{{ auth()->user()->name }} (Admin)</span>
+                                    </td>
+                                    <td>
+                                        <a :href="`/dashboard/payments/${item.id}`">
                                             <button class="btn btn-primary btn-sm ml-1">View</button>
                                         </a>
-                                        <a :href="`/dashboard/invoices/${item.id}/pay`" v-if="item.due > 0">
-                                            <button class="btn btn-success btn-sm ml-1">Pay</button>
+                                        <a :href="`/dashboard/payments/${item.id}/print`">
+                                            <button class="btn btn-success btn-sm ml-1">Print</button>
                                         </a>
-                                        <button class="btn btn-danger btn-sm ml-1" @click="deleteItem(item.id)">Cancel</button>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -100,13 +98,12 @@
 
 @section('scripts')
     <!-- Sweet Alerts js -->
-    <script src="/assets/libs/sweetalert2/sweetalert2.min.js"></script>
     <script src="https://unpkg.com/vue@next"></script>
     <script src="https://unpkg.com/vue-router@next"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
     <script>
-        const url = '{{ route('invoices') }}';
+        const url = '{{ route('payments') }}';
         const router = VueRouter.createRouter({
             history: VueRouter.createWebHistory(),
             routes: [],
@@ -118,7 +115,9 @@
                 return {
                     items: null,
                     filters: {
-                        status: '{{ $request->status }}',
+                        type: '{{ $request->type }}',
+                        customer: '{{ $request->customer }}',
+                        employee: '{{ $request->employee }}',
                         searchQuery: '{{ $request->searchQuery }}',
                         page: {{ $request->page ?? 1 }},
                     },
@@ -134,7 +133,7 @@
                     axios.post(url, this.filters).then(response => {
                         this.items = response.data;
                         if (update) {
-                            router.push({ path: 'invoices', query: this.filters});
+                            router.push({ path: 'payments', query: this.filters});
                         }
 
                         this.pageLoading = false;
@@ -142,27 +141,6 @@
                         //console.log(error);
                         this.pageLoading = false;
                     });
-                },
-                deleteItem(id) {
-                    Swal.fire({
-                        title: 'Are you sure?',
-                        icon: 'danger',
-                        html:`<form method="post" action="/dashboard/invoices/${id}/cancel">
-                            @csrf
-                        @method('DELETE')
-                        <p>Are you sure you want to cancel invoice ${id}?</p>
-                    <div class="form-group">
-                    <input type="number" name="pin" class="form-control" placeholder="PIN" required>
-                    </div>
-                    <div class="form-group">
-                    <button class="btn btn-danger btn-block">Cancel</button>
-                    </div>
-                    </form>`,
-                        showCloseButton: true,
-                        showCancelButton: false,
-                        focusConfirm: false,
-                        showConfirmButton: false
-                    })
                 }
             },
             watch: {
@@ -177,8 +155,4 @@
 
         Vue.createApp(App).use(router).mount('#vue');
     </script>
-@endsection
-
-@section('styles')
-    <link href="/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
 @endsection

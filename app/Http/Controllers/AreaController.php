@@ -28,7 +28,7 @@ class AreaController extends Controller
 
 
             $areas = $areas
-                ->latest()
+                ->orderBy('id', 'DESC')
                 ->paginate(20, ['*'], 'page', $request->page ?? 1);
 
             $areas->data = $areas->each(function ($c) {

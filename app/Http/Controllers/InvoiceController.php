@@ -35,7 +35,7 @@ class InvoiceController extends Controller
             }
 
             $invoices = $invoices
-                ->latest()
+                ->orderBy('id', 'DESC')
                 ->with('customer:id,name')
                 ->paginate(20, ['*'], 'page', $request->page ?? 1);
 
@@ -47,9 +47,57 @@ class InvoiceController extends Controller
 
     public function show(Invoice $invoice)
     {
+        $user = auth()->user();
+
+        if ($invoice->user_id != $user->id) {
+            abort(404);
+        }
+
         return view('invoices.show', ['invoice' => $invoice]);
     }
 
+    public function pay(Request $request, Invoice $invoice)
+    {
+        $user = auth()->user();
+
+        if ($invoice->user_id != $user->id) {
+            abort(404);
+        }
+
+        if ($invoice->status == Invoice::STATUS_PAID || $invoice->status == Invoice::STATUS_CANCELLED) {
+            return redirect()->back()->withErrors(['errors' => 'Invoice is already paid!']);
+        }
+
+        $request->validate([
+            'amount' => ['required', 'numeric', 'gt:1'],
+            'type' => ['required', 'numeric', 'in:1,2,3']
+        ]);
+
+        if ($request->amount > $invoice->due) {
+            return redirect()->back()->withErrors(['errors' => 'Payment amount is greater than invoice due!']);
+        }
+
+        $payment = $user->payments()->create([
+            'customer_id' => $invoice->customer->id,
+            'amount' => $request->amount,
+            'type' => $request->type
+        ]);
+
+        if ($request->amount == $invoice->due) {
+            $invoice->due = 0;
+            $invoice->status = Invoice::STATUS_PAID;
+        } else {
+            $invoice->due = round($invoice->due - $request->amount, 2);
+            $invoice->status = Invoice::STATUS_PARTIAL_PAID;
+        }
+
+        $invoice->payments()->attach($payment);
+        $invoice->save();
+
+        return redirect()
+            ->back()
+            ->with('message', "Payment for Invoice #$invoice->id was successful! print");
+    }
 
     public function destroy(Request $request, Invoice $invoice)
     {

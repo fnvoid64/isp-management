@@ -103,8 +103,19 @@ Route::middleware('auth')->prefix('/dashboard')->group(function () {
     Route::post('/invoices', [\App\Http\Controllers\InvoiceController::class, 'indexData']);
     Route::get('/invoices/{invoice}', [\App\Http\Controllers\InvoiceController::class, 'show'])
         ->name('invoices.show');
+    Route::post('/invoices/{invoice}/pay', [\App\Http\Controllers\InvoiceController::class, 'pay'])
+        ->name('invoices.pay');
     Route::delete('/invoices/{invoice}/cancel', [\App\Http\Controllers\InvoiceController::class, 'destroy'])
         ->name('invoices.cancel');
+
+    // Payments
+    Route::get('/payments', [\App\Http\Controllers\PaymentController::class, 'index'])
+        ->name('payments');
+    Route::post('/payments', [\App\Http\Controllers\PaymentController::class, 'indexData']);
+    Route::get('/payments/{payment}', [\App\Http\Controllers\PaymentController::class, 'show'])
+        ->name('payments.show');
+    Route::get('/payments/{payment}/print', [\App\Http\Controllers\PaymentController::class, 'printOut'])
+        ->name('payments.print');
 });
 
 Route::middleware('guest')->group(function () {
@@ -112,4 +123,8 @@ Route::middleware('guest')->group(function () {
         ->name('login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 });
+
+Route::get('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('logout');
 

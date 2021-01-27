@@ -7,79 +7,57 @@ use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        return view('payments.list', ['request' => $request]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function indexData(Request $request)
     {
-        //
+        if ($request->expectsJson()) {
+            $user = auth()->user();
+            $payments = $user
+                ->payments()
+                ->select(['id', 'amount', 'customer_id', 'type', 'employee_id']);
+
+            if ($request->filled('customer')) {
+                $customer = $user->customers()->findOrFail($request->customer);
+                $payments = $customer->payments();
+            }
+
+            if ($request->filled('employee')) {
+                $employee = $user->employees()->findOrFail($request->employee);
+                $payments = $employee->payments();
+            }
+
+            if ($request->filled('searchQuery') && $request->searchQuery != '#') {
+                $request->searchQuery = ltrim($request->searchQuery, '#');
+                $payments->where('id', 'ilike', '%' . $request->searchQuery . '%');
+            }
+
+            if ($request->filled('type')) {
+                $payments = $payments->where('type', $request->type);
+            }
+
+            $payments = $payments
+                ->orderBy('id', 'DESC')
+                ->with('customer:id,name')
+                ->with('employee:id,name')
+                ->paginate(20, ['*'], 'page', $request->page ?? 1);
+
+            return $payments;
+        }
+
+        return false;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Payment  $payment
-     * @return \Illuminate\Http\Response
-     */
     public function show(Payment $payment)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Payment  $payment
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Payment $payment)
+    public function printOut(Payment $payment)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Payment  $payment
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Payment $payment)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Payment  $payment
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Payment $payment)
-    {
-        //
+        return view('payments.print', ['payment' => $payment]);
     }
 }

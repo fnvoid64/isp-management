@@ -48,9 +48,8 @@ class CustomerController extends Controller
             }
 
             $customers = $customers
-                ->latest()
-                ->paginate(20, ['*'], 'page', $request->page ?? 1)
-                ;
+                ->orderBy('id', 'DESC')
+                ->paginate(20, ['*'], 'page', $request->page ?? 1);
 
             $customers->data = $customers->each(function ($c) {
                 $c->dues = $c->invoices()->whereIn('status', [\App\Models\Invoice::STATUS_UNPAID, \App\Models\Invoice::STATUS_PARTIAL_PAID])->sum('due');
@@ -79,7 +78,7 @@ class CustomerController extends Controller
             'nid' => ['bail', 'nullable', 'numeric', 'unique:customers'],
             'address' => ['required'],
             'area' => ['required', 'exists:areas,id'],
-            'connection_point' => ['required', 'exists:connection_points,id'],
+            'connection_point' => ['bail', 'nullable', 'exists:connection_points,id'],
             'package' => ['required', 'array'],
             'net_user' => ['nullable', 'string', 'max:255'],
             'net_pass' => ['nullable', 'string', 'max:255'],
@@ -96,7 +95,7 @@ class CustomerController extends Controller
             'nid' => $request->nid,
             'address' => $request->address,
             'area_id' => $request->area,
-            'connection_point_id' => $request->connection_point,
+            'connection_point_id' => $request->connection_point ?? null,
             'net_user' => $request->net_user,
             'net_pass' => $request->net_pass
         ]);
@@ -172,7 +171,7 @@ class CustomerController extends Controller
             'nid' => ['bail', 'nullable', 'numeric'],
             'address' => ['required'],
             'area' => ['required', 'exists:areas,id'],
-            'connection_point' => ['required', 'exists:connection_points,id'],
+            'connection_point' => ['bail', 'nullable', 'exists:connection_points,id'],
             'package' => ['required', 'array'],
             'net_user' => ['nullable', 'string', 'max:255'],
             'net_pass' => ['nullable', 'string', 'max:255'],
@@ -199,7 +198,7 @@ class CustomerController extends Controller
         $customer->nid = $request->nid;
         $customer->address = $request->address;
         $customer->area_id = $request->area;
-        $customer->connection_point_id = $request->connection_point;
+        $customer->connection_point_id = $request->connection_point ?? null;
         $customer->net_user = $request->net_user;
         $customer->net_pass = $request->net_pass;
         $customer->save();
@@ -250,7 +249,6 @@ class CustomerController extends Controller
 
         $invoices = $customer->invoices()->whereIn('status', [\App\Models\Invoice::STATUS_UNPAID, \App\Models\Invoice::STATUS_PARTIAL_PAID]);
         $dueAmount = $invoices->sum('due');
-        $user = auth()->user();
 
         if ($dueAmount > 0) {
             if ($request->amount <= $dueAmount) {
@@ -275,7 +273,8 @@ class CustomerController extends Controller
                             $invoice->status = Invoice::STATUS_PARTIAL_PAID;
                             $paidAmount = 0;
                         }
-                        $invoice->payment_id = $payment->id;
+
+                        $invoice->payments()->attach($payment);
                         $invoice->save();
                     }
                 }

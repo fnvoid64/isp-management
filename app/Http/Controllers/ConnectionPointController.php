@@ -31,7 +31,7 @@ class ConnectionPointController extends Controller
             }
 
             $connectionPoints = $connectionPoints
-                ->latest()
+                ->orderBy('id', 'DESC')
                 ->with('area:id,name')
                 ->paginate(20, ['*'], 'page', $request->page ?? 1);
 
