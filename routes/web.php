@@ -116,6 +116,28 @@ Route::middleware('auth')->prefix('/dashboard')->group(function () {
         ->name('payments.show');
     Route::get('/payments/{payment}/print', [\App\Http\Controllers\PaymentController::class, 'printOut'])
         ->name('payments.print');
+
+    // Employees
+    Route::get('/employees', [\App\Http\Controllers\EmployeeController::class, 'index'])
+        ->name('employees');
+    Route::post('/employees', [\App\Http\Controllers\EmployeeController::class, 'indexData']);
+
+    Route::get('/employees/create', [\App\Http\Controllers\EmployeeController::class, 'create'])
+        ->name('employees.create');
+    Route::post('/employees/create', [\App\Http\Controllers\EmployeeController::class, 'store']);
+
+    Route::get('/employees/{employee}', [\App\Http\Controllers\EmployeeController::class, 'show'])
+        ->name('employees.show');
+
+    Route::get('/employees/{employee}/edit', [\App\Http\Controllers\EmployeeController::class, 'edit'])
+        ->name('employees.edit');
+    Route::post('/employees/{employee}/edit', [\App\Http\Controllers\EmployeeController::class, 'update']);
+
+    Route::post('/employees/{employee}/changeStatus', [\App\Http\Controllers\EmployeeController::class, 'changeStatus'])
+        ->name('employees.changeStatus');
+
+    Route::delete('/employees/{employee}/delete', [\App\Http\Controllers\EmployeeController::class, 'destroy'])
+        ->name('employees.delete');
 });
 
 Route::middleware('guest')->group(function () {

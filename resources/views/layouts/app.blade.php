@@ -296,6 +296,15 @@
                         'Partially Paid Invoices' => route('invoices') . "?status=" . \App\Models\Invoice::STATUS_PARTIAL_PAID
                     ]
                 ],
+                'Employees' => [
+                    'i' => 'user',
+                    'r' => [
+                        'All Employees' => route('employees'),
+                        'Active Employees' => route('employees') . "?status=" . \App\Models\Employee::STATUS_ACTIVE,
+                        'Pending Employees' => route('employees') . "?status=" . \App\Models\Employee::STATUS_PENDING,
+                        'Create Employee' => route('employees.create')
+                    ]
+                ],
             ];
             @endphp
             <!--- Sidemenu -->

@@ -18,16 +18,20 @@ class CreateEmployeesTable extends Migration
             $table->integer('user_id');
 
             $table->smallInteger('status')->default(\App\Models\Employee::STATUS_PENDING);
+            $table->smallInteger('role');
             $table->string('name');
             $table->string('f_name')->nullable();
             $table->string('m_name')->nullable();
             $table->bigInteger('mobile')->unique();
-            $table->string('password');
-            $table->bigInteger('nid');
+            $table->bigInteger('nid')->nullable();
             $table->string('address');
             $table->text('photo')->nullable();
 
+            $table->string('username');
+            $table->string('password');
+
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

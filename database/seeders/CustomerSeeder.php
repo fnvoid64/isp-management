@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Area;
 use App\Models\ConnectionPoint;
 use App\Models\Customer;
+use App\Models\Employee;
 use App\Models\Package;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -35,5 +36,7 @@ class CustomerSeeder extends Seeder
             $packages = $packages->random()->take(mt_rand(1, 3))->get();
             $customer->packages()->attach($packages);
         });
+
+        $employees = Employee::factory()->count(10)->create();
     }
 }
