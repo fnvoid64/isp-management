@@ -18,7 +18,7 @@ class InvoiceController extends Controller
             $user = auth()->user();
             $invoices = $user
                 ->invoices()
-                ->select(['id', 'amount', 'due', 'customer_id', 'status']);
+                ->select(['id', 'amount', 'due', 'customer_id', 'status', 'created_at']);
 
             if ($request->filled('customer')) {
                 $customer = $user->customers()->findOrFail($request->customer);

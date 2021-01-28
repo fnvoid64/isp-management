@@ -12,6 +12,10 @@ class Payment extends Model
     public const TYPE_MOBILE_BANK = 2;
     public const TYPE_BANK = 3;
 
+    public const STATUS_CONFIRMED = 1;
+    public const STATUS_PENDING = 2;
+    public const STATUS_REJECTED = 0;
+
     public function customer()
     {
         return $this->belongsTo(Customer::class);

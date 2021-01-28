@@ -61,10 +61,9 @@ class EmployeeController extends Controller
             'mobile' => ['bail', 'required', 'numeric', 'digits:11', 'unique:employees'],
             'nid' => ['bail', 'nullable', 'numeric', 'unique:employees'],
             'address' => ['required'],
-            'username' => ['bail', 'required', 'string', 'max:255'],
+            'username' => ['bail', 'required', 'string', 'max:255', 'unique:employees'],
             'password' => ['bail', 'required', 'string', 'confirmed']
         ]);
-
         $employee = auth()->user()->employees()->create([
             'name' => $request->name,
             'f_name' => $request->f_name,
@@ -120,8 +119,7 @@ class EmployeeController extends Controller
             'm_name' => ['bail', 'nullable', 'string', 'max:255'],
             'mobile' => ['bail', 'required', 'numeric', 'digits:11'],
             'nid' => ['bail', 'nullable', 'numeric'],
-            'address' => ['required'],
-            'password' => ['bail', 'nullable', 'string', 'max:255', 'confirmed'],
+            'address' => ['required']
         ]);
 
         if ($request->mobile != $employee->mobile) {
@@ -142,10 +140,6 @@ class EmployeeController extends Controller
         $employee->mobile = $request->mobile;
         $employee->nid = $request->nid ?? null;
         $employee->address = $request->address;
-
-        if ($request->filled('password')) {
-            $employee->password = Hash::make($request->password);
-        }
 
         $employee->save();
 
@@ -174,6 +168,31 @@ class EmployeeController extends Controller
         }
 
         return false;
+    }
+
+    public function changePassword(Request $request, Employee $employee)
+    {
+        $user = auth()->user();
+
+        if ($employee->user_id != $user->id) {
+            abort(404);
+        }
+
+        $request->validate([
+            'password' => ['bail', 'required', 'string', 'confirmed']
+        ]);
+
+        $employee->password = Hash::make($request->password);
+        $employee->save();
+
+        return redirect()
+            ->back()
+            ->with('message', "Password for employee $employee->name successfully changed!");
+    }
+
+    public function changePasswordForm(Employee $employee)
+    {
+        return view('employees.changePassword', ['employee' => $employee]);
     }
 
     public function destroy(Request $request, Employee $employee)

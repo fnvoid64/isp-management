@@ -11,4 +11,9 @@ class Job extends Model
     public const STATUS_DONE = 1;
     public const STATUS_PENDING = 2;
     public const STATUS_CANCELLED = 0;
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
+    }
 }

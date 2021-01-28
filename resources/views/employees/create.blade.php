@@ -8,7 +8,7 @@
                 <h4 class="font-size-18">Employees</h4>
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('customers') }}">Employees</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('employees') }}">Employees</a></li>
                     <li class="breadcrumb-item active">New Employee</li>
                 </ol>
             </div>

@@ -27,7 +27,7 @@ class CreateEmployeesTable extends Migration
             $table->string('address');
             $table->text('photo')->nullable();
 
-            $table->string('username');
+            $table->string('username')->unique();
             $table->string('password');
 
             $table->timestamps();

@@ -136,8 +136,32 @@ Route::middleware('auth')->prefix('/dashboard')->group(function () {
     Route::post('/employees/{employee}/changeStatus', [\App\Http\Controllers\EmployeeController::class, 'changeStatus'])
         ->name('employees.changeStatus');
 
+    Route::get('/employees/{employee}/changePassword', [\App\Http\Controllers\EmployeeController::class, 'changePasswordForm'])
+        ->name('employees.changePassword');
+    Route::post('/employees/{employee}/changePassword', [\App\Http\Controllers\EmployeeController::class, 'changePassword']);
+
     Route::delete('/employees/{employee}/delete', [\App\Http\Controllers\EmployeeController::class, 'destroy'])
         ->name('employees.delete');
+
+    // Jobs
+    Route::get('/jobs', [\App\Http\Controllers\JobController::class, 'index'])
+        ->name('jobs');
+    Route::post('/jobs', [\App\Http\Controllers\JobController::class, 'indexData']);
+    Route::get('/jobs/create', [\App\Http\Controllers\JobController::class, 'create'])
+        ->name('jobs.create');
+    Route::post('/jobs/create', [\App\Http\Controllers\JobController::class, 'store']);
+    Route::get('/jobs/{job}', [\App\Http\Controllers\JobController::class, 'show'])
+        ->name('jobs.show');
+    Route::get('/jobs/{job}/edit', [\App\Http\Controllers\JobController::class, 'edit'])
+        ->name('jobs.edit');
+    Route::post('/jobs/{job}/edit', [\App\Http\Controllers\JobController::class, 'update']);
+    Route::delete('/jobs/{job}/delete', [\App\Http\Controllers\JobController::class, 'destroy'])
+        ->name('jobs.delete');
+
+    // SMS
+    Route::get('/sms/create', [\App\Http\Controllers\SMSController::class, 'create'])
+        ->name('sms.create');
+    Route::post('/sms/create', [\App\Http\Controllers\SMSController::class, 'store']);
 });
 
 Route::middleware('guest')->group(function () {

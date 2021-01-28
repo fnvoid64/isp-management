@@ -21,6 +21,7 @@ class CreatePaymentsTable extends Migration
             $table->integer('employee_id')->nullable();
             $table->double('amount');
             $table->smallInteger('type')->default(\App\Models\Payment::TYPE_CASH);
+            $table->smallInteger('status')->default(\App\Models\Payment::STATUS_PENDING);
 
             $table->timestamps();
         });

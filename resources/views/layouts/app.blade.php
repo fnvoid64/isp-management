@@ -41,10 +41,24 @@
         }
     </style>
     @yield('styles')
+    <link href="/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
 
     <!-- App Css-->
     <link href="/assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
 
+    <script src="/assets/libs/jquery/jquery.min.js"></script>
+
+    <script src="/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+
+    <script>
+        function showAlertMsg(msg, type = 'success') {
+            Swal.fire({
+                type: type,
+                title: type.toUpperCase() + '!',
+                html: msg
+            });
+        }
+    </script>
 </head>
 
 <body data-sidebar="dark">
@@ -305,6 +319,20 @@
                         'Create Employee' => route('employees.create')
                     ]
                 ],
+                'Jobs' => [
+                    'i' => 'settings',
+                    'r' => [
+                        'All Jobs' => route('jobs'),
+                        'Completed Jobs' => route('jobs') . "?status=" . \App\Models\Job::STATUS_DONE,
+                        'Pending Jobs' => route('jobs') . "?status=" . \App\Models\Job::STATUS_PENDING,
+                        'Cancelled Jobs' => route('jobs') . "?status=" . \App\Models\Job::STATUS_CANCELLED,
+                        'Create Job' => route('jobs.create')
+                    ]
+                ],
+                'Send SMS' => [
+                    'i' => 'email',
+                    'r' => route('sms.create')
+                ],
             ];
             @endphp
             <!--- Sidemenu -->
@@ -371,16 +399,11 @@
     <!-- end main content-->
 
 </div>
-<!-- END layout-wrapper -->
-
-<!-- JAVASCRIPT -->
-<script src="/assets/libs/jquery/jquery.min.js"></script>
 <script src="/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="/assets/libs/metismenu/metisMenu.min.js"></script>
 <script src="/assets/libs/simplebar/simplebar.min.js"></script>
 <script src="/assets/libs/node-waves/waves.min.js"></script>
 <script src="/assets/js/app.js"></script>
-
 @yield('scripts')
 
 </body>

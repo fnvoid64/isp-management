@@ -16,11 +16,16 @@ class Employee extends Model
 
     public const ROLE_COLLECTOR = 1;
 
-    protected $guarded = ['password'];
+    protected $guarded = [];
     protected $hidden = ['password'];
 
     public function payments()
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function jobs()
+    {
+        return $this->hasMany(Job::class);
     }
 }
