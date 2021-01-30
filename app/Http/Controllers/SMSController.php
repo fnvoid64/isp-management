@@ -20,8 +20,21 @@ class SMSController extends Controller
         ]);
 
         $customer = auth()->user()->customers()->findOrFail($request->customer);
+        $user = auth()->user();
+        if ($user->sms < 1) {
+            return redirect()->back()->withErrors(['errors' => 'You have no SMS, please buy some!']);
+        }
 
-        // todo send sms
+        // api
+        $api = "http://sms.publicia.net/sms/api?action=send-sms&api_key=SmdhS0lmaWNNcWQ9PUJCcUVpSWk=&to=880$customer->mobile&sms=" . urlencode($request->body);
+        $data = json_decode(file_get_contents($api));
+
+        if ($data->code != 'ok') {
+            return redirect()->back()->withErrors(['errors' => 'SMS Gateway error! Please contact Pranto.']);
+        }
+
+        $user->sms -= 1;
+        $user->save();
 
         return redirect()
             ->back()

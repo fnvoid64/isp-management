@@ -39,11 +39,6 @@
             border-right: 1px solid #ececec;
             flex: 2;
         }
-
-        .logoText {
-            color: #fff;
-            font-size: 1.3em;
-        }
     </style>
     @yield('styles')
     <link href="/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
@@ -70,30 +65,7 @@
 
 <!-- Begin page -->
 <div id="layout-wrapper">
-    @php
-    $notifications = [];
-    $user = auth()->user();
-    $pending_customers = $user->customers()->where('status', \App\Models\Customer::STATUS_PENDING)->count();
-    $pending_payments = $user->payments()->where('status', \App\Models\Payment::STATUS_PENDING)->count();
-
-    if ($pending_customers > 0) {
-        $notifications[] = [
-            'link' => route('customers') . '?status=' . \App\Models\Customer::STATUS_PENDING,
-            'text' => 'There are ' . $pending_customers . ' pending customers. Activate them.',
-            'icon' => 'account-supervisor-outline',
-            'header' => 'Pending Customers'
-        ];
-    }
-
-    if ($pending_payments> 0) {
-        $notifications[] = [
-            'link' => route('payments') . '?status=' . \App\Models\Payment::STATUS_PENDING,
-            'text' => 'There are ' . $pending_payments . ' pending payments. Activate them.',
-            'icon' => 'cash-multiple',
-            'header' => 'Pending Payments'
-        ];
-    }
-    @endphp
+    @php $employee = \App\Models\Employee::getEmployee(); $user= $employee->user; @endphp
     <header id="page-topbar">
         <div class="navbar-header">
             <div class="d-flex">
@@ -121,21 +93,6 @@
                 <button type="button" class="btn btn-sm px-3 font-size-24 header-item waves-effect" id="vertical-menu-btn">
                     <i class="mdi mdi-menu"></i>
                 </button>
-
-                <div class="d-none d-sm-block">
-                    <div class="dropdown pt-3 d-inline-block">
-                        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Create <i class="mdi mdi-chevron-down"></i>
-                        </a>
-
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                            <a class="dropdown-item" href="{{ route('customers.create') }}">Customer</a>
-                            <a class="dropdown-item" href="{{ route('packages.create') }}">Package</a>
-                            <a class="dropdown-item" href="{{ route('areas.create') }}">Area</a>
-                            <a class="dropdown-item" href="{{ route('connection_points.create') }}">Connection Point</a>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <div class="d-flex">
@@ -146,52 +103,105 @@
                 </div>
 
                 <div class="dropdown d-inline-block">
-                    <button type="button" class="btn header-item waves-effect" disabled>
-                        <b>{{ $user->sms }}</b> SMS
-                    </button>
-                </div>
-
-                <div class="dropdown d-inline-block">
                     <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-notifications-dropdown"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="mdi mdi-bell-outline"></i>
-                        @if ($notifications)
-                            <span class="badge badge-danger badge-pill">{{ count($notifications) }}</span>
-                        @endif
+                        <span class="badge badge-danger badge-pill">3</span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0"
                          aria-labelledby="page-header-notifications-dropdown">
                         <div class="p-3">
                             <div class="row align-items-center">
                                 <div class="col">
-                                    <h5 class="m-0 font-size-16"> Notifications ({{ $pending_customers + $pending_payments }}) </h5>
+                                    <h5 class="m-0 font-size-16"> Notifications (258) </h5>
                                 </div>
                             </div>
                         </div>
                         <div data-simplebar style="max-height: 230px;">
-                            @if ($notifications)
-                                @foreach($notifications as $n)
-                            <a href="{{ $n['link'] }}" class="text-reset notification-item">
+                            <a href="" class="text-reset notification-item">
                                 <div class="media">
                                     <div class="avatar-xs mr-3">
                                                 <span class="avatar-title bg-success rounded-circle font-size-16">
-                                                    <i class="mdi mdi-{{ $n['icon'] }}"></i>
+                                                    <i class="mdi mdi-cart-outline"></i>
                                                 </span>
                                     </div>
                                     <div class="media-body">
-                                        <h6 class="mt-0 mb-1">{{ $n['header'] }}</h6>
+                                        <h6 class="mt-0 mb-1">Your order is placed</h6>
                                         <div class="font-size-12 text-muted">
-                                            <p class="mb-1">{{ $n['text'] }}</p>
+                                            <p class="mb-1">Dummy text of the printing and typesetting industry.</p>
                                         </div>
                                     </div>
                                 </div>
                             </a>
-                                @endforeach
-                        @else
-                        <div class="p-2 border-top">
-                            No notifications
+
+                            <a href="" class="text-reset notification-item">
+                                <div class="media">
+                                    <div class="avatar-xs mr-3">
+                                                <span class="avatar-title bg-warning rounded-circle font-size-16">
+                                                    <i class="mdi mdi-message-text-outline"></i>
+                                                </span>
+                                    </div>
+                                    <div class="media-body">
+                                        <h6 class="mt-0 mb-1">New Message received</h6>
+                                        <div class="font-size-12 text-muted">
+                                            <p class="mb-1">You have 87 unread messages</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+
+                            <a href="" class="text-reset notification-item">
+                                <div class="media">
+                                    <div class="avatar-xs mr-3">
+                                                <span class="avatar-title bg-info rounded-circle font-size-16">
+                                                    <i class="mdi mdi-glass-cocktail"></i>
+                                                </span>
+                                    </div>
+                                    <div class="media-body">
+                                        <h6 class="mt-0 mb-1">Your item is shipped</h6>
+                                        <div class="font-size-12 text-muted">
+                                            <p class="mb-1">It is a long established fact that a reader will</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+
+                            <a href="" class="text-reset notification-item">
+                                <div class="media">
+                                    <div class="avatar-xs mr-3">
+                                                <span class="avatar-title bg-primary rounded-circle font-size-16">
+                                                    <i class="mdi mdi-cart-outline"></i>
+                                                </span>
+                                    </div>
+                                    <div class="media-body">
+                                        <h6 class="mt-0 mb-1">Your order is placed</h6>
+                                        <div class="font-size-12 text-muted">
+                                            <p class="mb-1">Dummy text of the printing and typesetting industry.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+
+                            <a href="" class="text-reset notification-item">
+                                <div class="media">
+                                    <div class="avatar-xs mr-3">
+                                                <span class="avatar-title bg-danger rounded-circle font-size-16">
+                                                    <i class="mdi mdi-message-text-outline"></i>
+                                                </span>
+                                    </div>
+                                    <div class="media-body">
+                                        <h6 class="mt-0 mb-1">New Message received</h6>
+                                        <div class="font-size-12 text-muted">
+                                            <p class="mb-1">You have 87 unread messages</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
                         </div>
-                        @endif
+                        <div class="p-2 border-top">
+                            <a class="btn btn-sm btn-link font-size-14 btn-block text-center" href="javascript:void(0)">
+                                View all
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -199,19 +209,28 @@
                 <div class="dropdown d-inline-block">
                     <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img class="rounded-circle header-profile-user" src="{{ $user->photo ? asset('/storage/' . $user->photo) : '/assets/images/profile-min.png' }}"
+                        <img class="rounded-circle header-profile-user" src="{{ $employee->photo ? asset('/storage/' . $employee->photo) : '/assets/images/profile-min.png' }}"
                              alt="Header Avatar">
                     </button>
                     <div class="dropdown-menu dropdown-menu-right">
                         <!-- item-->
-                        <a class="dropdown-item" href="{{ route('profile') }}"><i class="mdi mdi-account-circle font-size-17 align-middle mr-1"></i>Edit Profile</a>
-                        <a class="dropdown-item d-block" href="{{ route('profile.changePassword') }}"><i class="mdi mdi-settings font-size-17 align-middle mr-1"></i> Change Password</a>
+                        <a class="dropdown-item" href="#"><i class="mdi mdi-account-circle font-size-17 align-middle mr-1"></i> Profile</a>
+                        <a class="dropdown-item" href="#"><i class="mdi mdi-wallet font-size-17 align-middle mr-1"></i> My Wallet</a>
+                        <a class="dropdown-item d-block" href="#"><span class="badge badge-success float-right">11</span><i class="mdi mdi-settings font-size-17 align-middle mr-1"></i> Settings</a>
+                        <a class="dropdown-item" href="#"><i class="mdi mdi-lock-open-outline font-size-17 align-middle mr-1"></i> Lock screen</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item text-danger" href="{{ route('logout') }}">
+                        <a class="dropdown-item text-danger" href="{{ route('employee_logout') }}">
                             <i class="bx bx-power-off font-size-17 align-middle mr-1 text-danger"></i> Logout
                         </a>
                     </div>
                 </div>
+
+                <div class="dropdown d-inline-block">
+                    <button type="button" class="btn header-item noti-icon right-bar-toggle waves-effect">
+                        <i class="mdi mdi-settings-outline"></i>
+                    </button>
+                </div>
+
             </div>
         </div>
     </header>
@@ -220,101 +239,52 @@
     <div class="vertical-menu">
 
         <div data-simplebar class="h-100">
-            @php
+        @php
             $_nav_links = [
                 'Dashboard' => [
                     'i' => 'home',
-                    'r' => route('dashboard')
+                    'r' => route('dashboard_v2')
                 ],
                 'Customers' => [
                     'i' => 'user',
                     'r' => [
-                        'All Customers' => route('customers'),
-                        'Active Customers' => route('customers') . "?status=" . \App\Models\Customer::STATUS_ACTIVE,
-                        'Pending Customers' => route('customers') . "?status=" . \App\Models\Customer::STATUS_PENDING,
-                        'Create Customer' => route('customers.create')
-                    ]
-                ],
-                'Packages' => [
-                    'i' => 'package',
-                    'r' => [
-                        'All Packages' => route('packages'),
-                        'BroadBand Packages' => route('packages') . "?type=" . \App\Models\Package::TYPE_BROADBAND,
-                        'Cable TV Packages' => route('packages') . "?type=" . \App\Models\Package::TYPE_CABLE_TV,
-                        'Create Package' => route('packages.create')
-                    ]
-                ],
-                'Areas' => [
-                    'i' => 'location-pin',
-                    'r' => [
-                        'All Areas' => route('areas'),
-                        'Create Area' => route('areas.create')
-                    ]
-                ],
-                'Connection Points' => [
-                    'i' => 'direction',
-                    'r' => [
-                        'All Connection Points' => route('connection_points'),
-                        'Create Connection Point' => route('connection_points.create')
+                        'All Customers' => route('employee_customers'),
+                        'Active Customers' => route('employee_customers') . "?status=" . \App\Models\Customer::STATUS_ACTIVE,
+                        'Pending Customers' => route('employee_customers') . "?status=" . \App\Models\Customer::STATUS_PENDING,
+                        'Apply Customer' => route('employee_customers.create')
                     ]
                 ],
                 'Payments' => [
                     'i' => 'money',
                     'r' => [
-                        'All Payments' => route('payments'),
-                        'Cash Payments' => route('payments') . "?type=" . \App\Models\Payment::TYPE_CASH,
-                        'bKash/Rocket/Nagad Payments' => route('payments') . "?type=" . \App\Models\Payment::TYPE_MOBILE_BANK,
-                        'Bank Payments' => route('payments') . "?type=" . \App\Models\Payment::TYPE_BANK
+                        'All Payments' => route('employee_payments'),
+                        'Cash Payments' => route('employee_payments') . "?type=" . \App\Models\Payment::TYPE_CASH,
+                        'bKash/Rocket/Nagad Payments' => route('employee_payments') . "?type=" . \App\Models\Payment::TYPE_MOBILE_BANK,
+                        'Bank Payments' => route('employee_payments') . "?type=" . \App\Models\Payment::TYPE_BANK
                     ]
                 ],
                 'Invoices' => [
                     'i' => 'file',
                     'r' => [
-                        'All Invoices' => route('invoices'),
-                        'Paid Invoices' => route('invoices') . "?status=" . \App\Models\Invoice::STATUS_PAID,
-                        'Unpaid Invoices' => route('invoices') . "?status=" . \App\Models\Invoice::STATUS_UNPAID,
-                        'Partially Paid Invoices' => route('invoices') . "?status=" . \App\Models\Invoice::STATUS_PARTIAL_PAID,
-                        'Cancelled Invoices' => route('invoices') . "?status=" . \App\Models\Invoice::STATUS_CANCELLED
-                    ]
-                ],
-                'Employees' => [
-                    'i' => 'user',
-                    'r' => [
-                        'All Employees' => route('employees'),
-                        'Active Employees' => route('employees') . "?status=" . \App\Models\Employee::STATUS_ACTIVE,
-                        'Pending Employees' => route('employees') . "?status=" . \App\Models\Employee::STATUS_PENDING,
-                        'Create Employee' => route('employees.create')
+                        'All Invoices' => route('employee_invoices'),
+                        'Paid Invoices' => route('employee_invoices') . "?status=" . \App\Models\Invoice::STATUS_PAID,
+                        'Unpaid Invoices' => route('employee_invoices') . "?status=" . \App\Models\Invoice::STATUS_UNPAID,
+                        'Partially Paid Invoices' => route('employee_invoices') . "?status=" . \App\Models\Invoice::STATUS_PARTIAL_PAID,
+                        'Cancelled Invoices' => route('employee_invoices') . "?status=" . \App\Models\Invoice::STATUS_CANCELLED
                     ]
                 ],
                 'Jobs' => [
-                    'i' => 'briefcase',
-                    'r' => [
-                        'All Jobs' => route('jobs'),
-                        'Completed Jobs' => route('jobs') . "?status=" . \App\Models\Job::STATUS_DONE,
-                        'Pending Jobs' => route('jobs') . "?status=" . \App\Models\Job::STATUS_PENDING,
-                        'Cancelled Jobs' => route('jobs') . "?status=" . \App\Models\Job::STATUS_CANCELLED,
-                        'Create Job' => route('jobs.create')
-                    ]
-                ],
-                'Send SMS' => [
-                    'i' => 'email',
-                    'r' => route('sms.create')
-                ],
-                'Profile' => [
                     'i' => 'settings',
                     'r' => [
-                        'Edit Profile' => route('profile'),
-                        'Change Password' => route('profile.changePassword'),
-                        'Change PIN' => route('profile.changePin')
+                        'All Jobs' => route('employee_jobs'),
+                        'Completed Jobs' => route('employee_jobs') . "?status=" . \App\Models\Job::STATUS_DONE,
+                        'Pending Jobs' => route('employee_jobs') . "?status=" . \App\Models\Job::STATUS_PENDING,
+                        'Cancelled Jobs' => route('employee_jobs') . "?status=" . \App\Models\Job::STATUS_CANCELLED
                     ]
                 ],
-                'Logout' => [
-                    'i' => 'close',
-                    'r' => route('logout')
-                ],
             ];
-            @endphp
-            <!--- Sidemenu -->
+        @endphp
+        <!--- Sidemenu -->
             <div id="sidebar-menu">
                 <!-- Left Menu Start -->
                 <ul class="metismenu list-unstyled" id="side-menu">
@@ -329,7 +299,7 @@
                                 </a>
                                 <ul class="sub-menu" aria-expanded="false">
                                     @foreach($l['r'] as $n => $li)
-                                    <li><a href="{{ $li }}">{{ $n }}</a></li>
+                                        <li><a href="{{ $li }}">{{ $n }}</a></li>
                                     @endforeach
                                 </ul>
                             </li>

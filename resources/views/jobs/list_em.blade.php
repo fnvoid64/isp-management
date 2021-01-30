@@ -1,21 +1,14 @@
-@extends('layouts.app')
-@section('title', 'Employees')
+@extends('layouts.employee')
+@section('title', 'Jobs')
 
 @section('content')
     <div class="row align-items-center">
-        <div class="col">
-            <div class="page-title-box">
-                <h4 class="font-size-18">Employees</h4>
-                <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Employees</li>
-                </ol>
-            </div>
-        </div>
-        <div class="col">
-            <a href="{{ route('employees.create') }}">
-                <button class="btn btn-success float-right">Add Employee</button>
-            </a>
+        <div class="page-title-box">
+            <h4 class="font-size-18">Jobs</h4>
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{{ route('dashboard_v2') }}">Dashboard</a></li>
+                <li class="breadcrumb-item active">Jobs</li>
+            </ol>
         </div>
     </div>
 
@@ -31,16 +24,7 @@
                             <div class="spinner-grow spinner-grow-sm text-success mr-1" role="status" v-if="pageLoading">
                                 <span class="sr-only">Loading...</span>
                             </div>
-                            Employee List
-                        </div>
-
-                        <div class="col-auto">
-                            <select class="form-control form-control-sm" v-model="filters.status">
-                                <option value="">Status</option>
-                                <option value="{{ \App\Models\Employee::STATUS_ACTIVE }}">Active</option>
-                                <option value="{{ \App\Models\Employee::STATUS_PENDING }}">Pending</option>
-                                <option value="{{ \App\Models\Employee::STATUS_DISABLED }}">Disabled</option>
-                            </select>
+                            Job List
                         </div>
 
                         <div class="col-auto">
@@ -54,34 +38,28 @@
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
-                                <th>#ID</th>
-                                <th>Name</th>
-                                <th>Mobile</th>
-                                <th>Address</th>
+                                <th>ID</th>
+                                <th>Job Title</th>
+                                <th>Job Description</th>
                                 <th>Status</th>
-                                <th>Collections</th>
                                 <th>Actions</th>
                                 </thead>
                                 <tbody>
                                 <tr v-for="item in items.data" :key="item.id">
-                                    <td>#[[ item.id ]]</td>
+                                    <td>[[ item.id ]]</td>
                                     <td>[[ item.name ]]</td>
-                                    <td>0[[ item.mobile ]]</td>
-                                    <td>[[ item.address ]]</td>
                                     <td>
-                                        <span class="badge badge-success" v-if="item.status === {{ \App\Models\Employee::STATUS_ACTIVE }}">Active</span>
-                                        <span class="badge badge-warning" v-if="item.status === {{ \App\Models\Employee::STATUS_PENDING }}">Pending</span>
-                                        <span class="badge badge-danger" v-if="item.status === {{ \App\Models\Employee::STATUS_DISABLED }}">Disabled</span>
+                                        [[ item.body ]]
                                     </td>
-                                    <td>BDT [[ item.collection_count ]]</td>
                                     <td>
-                                        <a :href="`/dashboard/employees/${item.id}`">
-                                            <button class="btn btn-success btn-sm">View</button>
+                                        <span class="badge badge-success" v-if="item.status == {{ \App\Models\Job::STATUS_DONE }}">Completed</span>
+                                        <span class="badge badge-primary" v-else-if="item.status == {{ \App\Models\Job::STATUS_PENDING }}">Pending</span>
+                                        <span class="badge badge-secondary" v-else>Cancelled</span>
+                                    </td>
+                                    <td>
+                                        <a :href="`/dashboard_v2/jobs/${item.id}`">
+                                            <button class="btn btn-success btn-sm ml-1">View</button>
                                         </a>
-                                        <a :href="`/dashboard/employees/${item.id}/edit`">
-                                            <button class="btn btn-primary btn-sm ml-1">Edit</button>
-                                        </a>
-                                        <button class="btn btn-danger btn-sm ml-1" @click="deleteItem(item.id, item.name)">Delete</button>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -112,14 +90,12 @@
 @endsection
 
 @section('scripts')
-    <!-- Sweet Alerts js -->
-    <script src="/assets/libs/sweetalert2/sweetalert2.min.js"></script>
     <script src="https://unpkg.com/vue@next"></script>
     <script src="https://unpkg.com/vue-router@next"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
     <script>
-        const url = '{{ route('employees') }}';
+        const url = '{{ route('employee_jobs') }}';
         const router = VueRouter.createRouter({
             history: VueRouter.createWebHistory(),
             routes: [],
@@ -147,7 +123,7 @@
                     axios.post(url, this.filters).then(response => {
                         this.items = response.data;
                         if (update) {
-                            router.push({ path: 'employees', query: this.filters});
+                            router.push({ path: 'jobs', query: this.filters});
                         }
 
                         this.pageLoading = false;
@@ -155,27 +131,6 @@
                         //console.log(error);
                         this.pageLoading = false;
                     });
-                },
-                deleteItem(id, name) {
-                    Swal.fire({
-                        title: 'Are you sure?',
-                        icon: 'danger',
-                        html:`<form method="post" action="/dashboard/employees/${id}/delete">
-                            @csrf
-                        @method('DELETE')
-                        <p>Are you sure you want to delete employee ${name}?</p>
-                        <div class="form-group">
-                        <input type="number" name="pin" class="form-control" placeholder="PIN" required>
-                        </div>
-                        <div class="form-group">
-                        <button class="btn btn-danger btn-block">Delete</button>
-                        </div>
-                        </form>`,
-                        showCloseButton: true,
-                        showCancelButton: false,
-                        focusConfirm: false,
-                        showConfirmButton: false
-                    })
                 }
             },
             watch: {
@@ -190,8 +145,4 @@
 
         Vue.createApp(App).use(router).mount('#vue');
     </script>
-@endsection
-
-@section('styles')
-    <link href="/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
 @endsection

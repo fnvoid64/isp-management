@@ -27,6 +27,8 @@ class CreateUsersTable extends Migration
             $table->bigInteger('nid')->nullable();
             $table->bigInteger('mobile');
             $table->string('address')->nullable();
+            $table->string('company_name')->nullable();
+            $table->string('company_short')->nullable();
 
             $table->text('photo')->nullable();
 

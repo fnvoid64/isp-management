@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.employee')
 @section('title', 'Invoices')
 
 @section('content')
@@ -7,7 +7,7 @@
             <div class="page-title-box">
                 <h4 class="font-size-18">Invoices</h4>
                 <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard_v2') }}">Dashboard</a></li>
                     <li class="breadcrumb-item active">Invoices</li>
                 </ol>
             </div>
@@ -56,7 +56,7 @@
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
-                                <th>#ID</th>
+                                <th>ID</th>
                                 <th>Month</th>
                                 <th>Customer</th>
                                 <th>Amount</th>
@@ -66,10 +66,10 @@
                                 </thead>
                                 <tbody>
                                 <tr v-for="item in items.data" :key="item.id">
-                                    <td>#[[ item.id ]]</td>
+                                    <td>[[ item.id ]]</td>
                                     <td>[[ (new Date(Date.parse(item.created_at))).toLocaleString('default', { month: 'long' }) ]]</td>
                                     <td>
-                                        <a :href="`/dashboard/customers/${item.customer.id}`">[[ item.customer.name ]]</a>
+                                        <a :href="`/dashboard_v2/customers/${item.customer.id}`">[[ item.customer.name ]]</a>
                                     </td>
                                     <td>BDT [[ item.amount ]]</td>
                                     <td>BDT [[ item.due ]]</td>
@@ -80,13 +80,12 @@
                                         <span class="badge badge-secondary" v-else>Cancelled</span>
                                     </td>
                                     <td>
-                                        <a :href="`/dashboard/invoices/${item.id}`">
+                                        <a :href="`/dashboard_v2/invoices/${item.id}`">
                                             <button class="btn btn-primary btn-sm ml-1">View</button>
                                         </a>
-                                        <a :href="`/dashboard/invoices/${item.id}/pay`" v-if="item.due > 0">
+                                        <a :href="`/dashboard_v2/invoices/${item.id}/payEm`" v-if="item.due > 0">
                                             <button class="btn btn-success btn-sm ml-1">Pay</button>
                                         </a>
-                                        <button class="btn btn-danger btn-sm ml-1" @click="deleteItem(item.id)">Cancel</button>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -125,7 +124,7 @@
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
     <script>
-        const url = '{{ route('invoices') }}';
+        const url = '{{ route('employee_invoices') }}';
         const router = VueRouter.createRouter({
             history: VueRouter.createWebHistory(),
             routes: [],
@@ -162,27 +161,6 @@
                         //console.log(error);
                         this.pageLoading = false;
                     });
-                },
-                deleteItem(id) {
-                    Swal.fire({
-                        title: 'Are you sure?',
-                        icon: 'danger',
-                        html:`<form method="post" action="/dashboard/invoices/${id}/cancel">
-                            @csrf
-                        @method('DELETE')
-                        <p>Are you sure you want to cancel invoice ${id}?</p>
-                    <div class="form-group">
-                    <input type="number" name="pin" class="form-control" placeholder="PIN" required>
-                    </div>
-                    <div class="form-group">
-                    <button class="btn btn-danger btn-block">Cancel</button>
-                    </div>
-                    </form>`,
-                        showCloseButton: true,
-                        showCancelButton: false,
-                        focusConfirm: false,
-                        showConfirmButton: false
-                    })
                 }
             },
             watch: {

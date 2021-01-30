@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Employee extends Model
@@ -15,8 +14,8 @@ class Employee extends Model
     public const STATUS_DISABLED = 0;
 
     public const ROLE_COLLECTOR = 1;
+    protected static $employee;
 
-    protected $guarded = [];
     protected $hidden = ['password'];
 
     public function payments()
@@ -27,5 +26,20 @@ class Employee extends Model
     public function jobs()
     {
         return $this->hasMany(Job::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public static function getEmployee()
+    {
+        return static::$employee;
+    }
+
+    public static function setEmployee($employee_id)
+    {
+        static::$employee = static::findOrFail($employee_id);
     }
 }

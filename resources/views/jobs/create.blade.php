@@ -29,14 +29,14 @@
                             <select class="select2 form-control" name="employee">
                                 <option value="">Employee</option>
                                 @foreach(auth()->user()->employees()->select(['id', 'name'])->get() as $e)
-                                    <option value="{{ $e->id }}">{{ $e->name }}</option>
+                                    <option value="{{ $e->id }}" @if ($request->employee == $e->id) selected @endif>{{ $e->name }}</option>
                                 @endforeach
                             </select>
                         </div>
 
                         <div class="form-group">
                             <label for="name">Job Title</label>
-                            <input type="text" name="name" class="form-control" placeholder="Connection Point Name">
+                            <input type="text" name="name" class="form-control" placeholder="Job Title">
                         </div>
 
                         <div class="form-group">

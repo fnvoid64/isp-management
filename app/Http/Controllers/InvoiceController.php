@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
 
@@ -12,10 +13,15 @@ class InvoiceController extends Controller
         return view('invoices.list', ['request' => $request]);
     }
 
-    public function indexData(Request $request)
+    public function indexEm(Request $request)
+    {
+        return view('invoices.list_em', ['request' => $request]);
+    }
+
+    public function indexData(Request $request, $employee = null)
     {
         if ($request->expectsJson()) {
-            $user = auth()->user();
+            $user = $employee ? $employee->user : auth()->user();
             $invoices = $user
                 ->invoices()
                 ->select(['id', 'amount', 'due', 'customer_id', 'status', 'created_at']);
@@ -34,6 +40,12 @@ class InvoiceController extends Controller
                 $invoices = $invoices->where('status', $request->status);
             }
 
+            if ($request->filled('date')) {
+                $date = explode(':', $request->date);
+
+                $invoices = $invoices->whereBetween('created_at', $date);
+            }
+
             $invoices = $invoices
                 ->orderBy('id', 'DESC')
                 ->with('customer:id,name')
@@ -43,6 +55,11 @@ class InvoiceController extends Controller
         }
 
         return false;
+    }
+
+    public function indexDataEm(Request $request)
+    {
+        return $this->indexData($request, Employee::getEmployee());
     }
 
     public function show(Invoice $invoice)
@@ -56,9 +73,20 @@ class InvoiceController extends Controller
         return view('invoices.show', ['invoice' => $invoice]);
     }
 
-    public function pay(Request $request, Invoice $invoice)
+    public function showEm(Invoice $invoice)
     {
-        $user = auth()->user();
+        $user = Employee::getEmployee()->user;
+
+        if ($invoice->user_id != $user->id) {
+            abort(404);
+        }
+
+        return view('invoices.show_em', ['invoice' => $invoice]);
+    }
+
+    public function pay(Request $request, Invoice $invoice, $employee = null)
+    {
+        $user = $employee ? $employee->user : auth()->user();
 
         if ($invoice->user_id != $user->id) {
             abort(404);
@@ -78,6 +106,7 @@ class InvoiceController extends Controller
         }
 
         $payment = $user->payments()->create([
+            'employee_id' => $employee ? $employee->id : null,
             'customer_id' => $invoice->customer->id,
             'amount' => $request->amount,
             'type' => $request->type
@@ -96,7 +125,12 @@ class InvoiceController extends Controller
 
         return redirect()
             ->back()
-            ->with('message', "Payment for Invoice #$invoice->id was successful! print");
+            ->with('message', "Payment for Invoice #$invoice->id was successful! " . '<a href="' . route($employee ? 'employee_payments.print' : 'payments.print', ['payment' => $payment->id]) .'" class="btn btn-primary btn-sm">Print</a>');
+    }
+
+    public function payEm(Request $request, Invoice $invoice)
+    {
+        return $this->pay($request, $invoice, Employee::getEmployee());
     }
 
     public function destroy(Request $request, Invoice $invoice)

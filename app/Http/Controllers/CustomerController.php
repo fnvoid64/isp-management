@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\Employee;
 use App\Models\Invoice;
 use App\Models\Package;
+use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -16,10 +18,15 @@ class CustomerController extends Controller
         return view('customers.list', compact('request'));
     }
 
-    public function indexData(Request $request)
+    public function indexEmployee(Request $request)
+    {
+        return view('customers.list_employee', compact('request'));
+    }
+
+    public function indexData(Request $request, $user = null)
     {
         if ($request->expectsJson()) {
-            $user = auth()->user();
+            $user = $user ? $user : auth()->user();
             $customers = $user
                 ->customers()
                 ->select(['id', 'name', 'mobile', 'address', 'status']);
@@ -62,13 +69,23 @@ class CustomerController extends Controller
         return false;
     }
 
+    public function indexDataEmployee(Request $request)
+    {
+        $employee = Employee::getEmployee();
+        return $this->indexData($request, $employee->user);
+    }
 
     public function create()
     {
         return view('customers.create');
     }
 
-    public function store(Request $request)
+    public function createEmployee()
+    {
+        return view('customers.create_employee');
+    }
+
+    public function store(Request $request, $employee = null)
     {
         $request->validate([
             'name' => ['bail', 'required', 'string', 'max:255'],
@@ -84,10 +101,11 @@ class CustomerController extends Controller
             'net_pass' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $user = auth()->user();
+        $user = $employee ? $employee->user : auth()->user();
 
         // Create Customer
         $customer = $user->customers()->create([
+            'employee_id' => $employee ? $employee->id : null,
             'name' => $request->name,
             'f_name' => $request->f_name,
             'm_name' => $request->m_name,
@@ -101,11 +119,18 @@ class CustomerController extends Controller
         ]);
 
         // Generate Invoice
-        $this->generateInvoice($user, $customer, $request->package);
+        if (!$request->filled('no_invoice')) {
+            $this->generateInvoice($user, $customer, $request->package);
+        }
 
         return redirect()
             ->back()
             ->with('message', "Customer $customer->name successfully created!");
+    }
+
+    public function storeEmployee(Request $request)
+    {
+        return $this->store($request, Employee::getEmployee());
     }
 
     protected function generateInvoice($user, Customer $customer, array $packages, bool $detach = false): void
@@ -141,6 +166,18 @@ class CustomerController extends Controller
         }
 
         return view('customers.show', compact('customer'));
+    }
+
+    public function showEmployee(Customer $customer)
+    {
+        $employee = Employee::getEmployee();
+        $user = $employee->user;
+
+        if ($customer->user_id != $user->id) {
+            abort(404);
+        }
+
+        return view('customers.show_employee', compact('customer'));
     }
 
     public function edit(Customer $customer)
@@ -234,9 +271,9 @@ class CustomerController extends Controller
         return false;
     }
 
-    public function makePayment(Request $request, Customer $customer)
+    public function makePayment(Request $request, Customer $customer, $employee = null)
     {
-        $user = auth()->user();
+        $user = $employee ? $employee->user : auth()->user();
 
         if ($customer->user_id != $user->id) {
             abort(404);
@@ -256,9 +293,11 @@ class CustomerController extends Controller
 
                 // Make Payment
                 $payment = $user->payments()->create([
+                    'employee_id' => $employee ? $employee->id : null,
                     'customer_id' => $customer->id,
                     'amount' => $request->amount,
-                    'type' => $request->type
+                    'type' => $request->type,
+                    'status' => $employee ? Payment::STATUS_PENDING : Payment::STATUS_CONFIRMED
                 ]);
 
                 // Mark Invoice
@@ -281,13 +320,18 @@ class CustomerController extends Controller
 
                 return redirect()
                     ->back()
-                    ->with('message', 'Payment completed! <a href=""><button class="btn btn-secondary btn-sm">Print</button></a>');
+                    ->with('message', 'Payment completed!'  . '<a href="' . route($employee ? 'employee_payments.print' : 'payments.print', ['payment' => $payment->id]) .'" class="btn btn-primary btn-sm">Print</a>');
             } else {
                 return redirect()->back()->withErrors('Amount is greater than due!');
             }
         } else {
             return redirect()->back()->withErrors('There is no due!');
         }
+    }
+
+    public function makePaymentEmployee(Request $request, Customer $customer)
+    {
+        return $this->makePayment($request, $customer, Employee::getEmployee());
     }
 
     public function destroy(Request $request, Customer $customer)

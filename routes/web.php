@@ -23,9 +23,7 @@ Route::middleware('auth')->prefix('/dashboard')->group(function () {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
 
-    Route::get('/', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
     // Customers
     Route::get('/customers', [\App\Http\Controllers\CustomerController::class, 'index'])
@@ -162,6 +160,24 @@ Route::middleware('auth')->prefix('/dashboard')->group(function () {
     Route::get('/sms/create', [\App\Http\Controllers\SMSController::class, 'create'])
         ->name('sms.create');
     Route::post('/sms/create', [\App\Http\Controllers\SMSController::class, 'store']);
+
+    // Profile
+    Route::get('/profile', [\App\Http\Controllers\DashboardController::class, 'userProfile'])
+        ->name('profile');
+    Route::post('/profile', [\App\Http\Controllers\DashboardController::class, 'userProfileStore']);
+
+    Route::get('/profile/changePassword', [\App\Http\Controllers\DashboardController::class, 'changePasswordForm'])
+        ->name('profile.changePassword');
+    Route::post('/profile/changePassword', [\App\Http\Controllers\DashboardController::class, 'changePassword']);
+
+    Route::get('/profile/changePin', [\App\Http\Controllers\DashboardController::class, 'changePinForm'])
+        ->name('profile.changePin');
+    Route::post('/profile/changePin', [\App\Http\Controllers\DashboardController::class, 'changePin']);
+
+    // Statistics
+    Route::get('/statistics', [\App\Http\Controllers\StatisticsController::class, 'index'])
+        ->name('statistics');
+    Route::post('/statistics', [\App\Http\Controllers\StatisticsController::class, 'indexData']);
 });
 
 Route::middleware('guest')->group(function () {
@@ -174,3 +190,56 @@ Route::get('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
 
+
+Route::middleware('employee.guest')->group(function () {
+    Route::get('/login_v2', [\App\Http\Controllers\EmployeeController::class, 'loginForm'])->name('employee_login');
+    Route::post('/login_v2', [\App\Http\Controllers\EmployeeController::class, 'login']);
+    Route::get('/logout_v2', [\App\Http\Controllers\EmployeeController::class, 'logout'])->name('employee_logout');
+});
+
+Route::middleware('employee.auth')->prefix('/dashboard_v2')->group(function () {
+    Route::get('/', [\App\Http\Controllers\DashboardV2Controller::class, 'index'])->name('dashboard_v2');
+
+    // Customers
+    Route::get('/customers', [\App\Http\Controllers\CustomerController::class, 'indexEmployee'])
+        ->name('employee_customers');
+    Route::post('/customers', [\App\Http\Controllers\CustomerController::class, 'indexDataEmployee']);
+
+    Route::get('/customers/create', [\App\Http\Controllers\CustomerController::class, 'createEmployee'])
+        ->name('employee_customers.create');
+    Route::post('/customers/create', [\App\Http\Controllers\CustomerController::class, 'storeEmployee']);
+
+    Route::get('/customers/{customer}', [\App\Http\Controllers\CustomerController::class, 'showEmployee'])
+        ->name('employee_customers.show');
+
+    Route::post('/customers/{customer}/makePayment', [\App\Http\Controllers\CustomerController::class, 'makePaymentEmployee'])
+        ->name('employee_customers.makePayment');
+
+    // Payments
+    Route::get('/payments', [\App\Http\Controllers\PaymentController::class, 'indexEm'])
+        ->name('employee_payments');
+    Route::post('/payments', [\App\Http\Controllers\PaymentController::class, 'indexDataEm']);
+    Route::get('/payments/{payment}', [\App\Http\Controllers\PaymentController::class, 'showEm'])
+        ->name('employee_payments.show');
+    Route::get('/payments/{payment}/print', [\App\Http\Controllers\PaymentController::class, 'printOutEm'])
+        ->name('employee_payments.print');
+
+    // Invoice
+    Route::get('/invoices', [\App\Http\Controllers\InvoiceController::class, 'indexEm'])
+        ->name('employee_invoices');
+    Route::post('/invoices', [\App\Http\Controllers\InvoiceController::class, 'indexDataEm']);
+    Route::get('/invoices/{invoice}', [\App\Http\Controllers\InvoiceController::class, 'showEm'])
+        ->name('employee_invoices.show');
+    Route::post('/invoices/{invoice}/pay', [\App\Http\Controllers\InvoiceController::class, 'payEm'])
+        ->name('employee_invoices.pay');
+
+    // Jobs
+    Route::get('/jobs', [\App\Http\Controllers\JobController::class, 'indexEm'])
+        ->name('employee_jobs');
+    Route::post('/jobs', [\App\Http\Controllers\JobController::class, 'indexDataEm']);
+
+    Route::get('/jobs/{job}', [\App\Http\Controllers\JobController::class, 'showEm'])
+        ->name('employee_jobs.show');
+    Route::post('/jobs/{job}/markComplete', [\App\Http\Controllers\JobController::class, 'markCompleted'])
+        ->name('employee_jobs.markComplete');
+});

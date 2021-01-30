@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\Job;
 use Illuminate\Http\Request;
 
@@ -12,11 +13,16 @@ class JobController extends Controller
         return view('jobs.list', ['request' => $request]);
     }
 
-    public function indexData(Request $request)
+    public function indexEm(Request $request)
+    {
+        return view('jobs.list_em', ['request' => $request]);
+    }
+
+    public function indexData(Request $request, $employee = null)
     {
         if ($request->expectsJson()) {
-            $user = auth()->user();
-            $jobs = $user
+            $jobs = $employee ? $employee : auth()->user();
+            $jobs = $jobs
                 ->jobs()
                 ->select(['id', 'name', 'body', 'status']);
 
@@ -46,9 +52,14 @@ class JobController extends Controller
         return false;
     }
 
-    public function create()
+    public function indexDataEm(Request $request)
     {
-        return view('jobs.create');
+        return $this->indexData($request, Employee::getEmployee());
+    }
+
+    public function create(Request $request)
+    {
+        return view('jobs.create', ['request' => $request]);
     }
 
 
@@ -85,6 +96,17 @@ class JobController extends Controller
         return view('jobs.show', ['job' => $job]);
     }
 
+    public function showEm(Job $job)
+    {
+        $employee = Employee::getEmployee();
+
+        if ($job->employee_id != $employee->id) {
+            abort(404);
+        }
+
+        return view('jobs.show_em', ['job' => $job]);
+    }
+
     public function edit(Job $job)
     {
         $user = auth()->user();
@@ -116,6 +138,22 @@ class JobController extends Controller
         return redirect()
             ->back()
             ->with('message', 'Job updated successfully!');
+    }
+
+    public function markCompleted(Request $request, Job $job)
+    {
+        $employee = Employee::getEmployee();
+
+        if ($job->employee_id != $employee->id) {
+            abort(404);
+        }
+
+        $job->status = Job::STATUS_DONE;
+        $job->save();
+
+        return redirect()
+            ->back()
+            ->with('message', 'Job ' . $job->name . ' marked as completed!');
     }
 
     public function destroy(Request $request, Job $job)

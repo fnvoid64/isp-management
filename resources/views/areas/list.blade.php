@@ -45,7 +45,7 @@
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
-                                <th>ID</th>
+                                <th>#ID</th>
                                 <th>Name</th>
                                 <th>Customers</th>
                                 <th>Connection Points</th>
@@ -53,7 +53,7 @@
                                 </thead>
                                 <tbody>
                                 <tr v-for="item in items.data" :key="item.id">
-                                    <td>[[ item.id ]]</td>
+                                    <td>#[[ item.id ]]</td>
                                     <td>[[ item.name ]]</td>
                                     <td>
                                         <a :href="`/dashboard/customers?area=${item.id}`" v-if="item.customer_count > 0">

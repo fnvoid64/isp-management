@@ -67,7 +67,7 @@
                                     <label for="area">Connection Point</label>
                                     <select name="connection_point" class="select2 cp form-control" data-placeholder="Select Connection Point">
                                         @foreach($user->connection_points()->get() as $connection_point)
-                                            <option value="{{ $connection_point->id }}">{{ $connection_point->name }}</option>
+                                            <option value="{{ $connection_point->id }}">{{ $connection_point->name }} ({{ $connection_point->area->name }})</option>
                                         @endforeach
                                     </select>
                                 </div>

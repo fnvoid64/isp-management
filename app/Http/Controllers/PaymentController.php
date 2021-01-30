@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 
@@ -12,13 +13,18 @@ class PaymentController extends Controller
         return view('payments.list', ['request' => $request]);
     }
 
-    public function indexData(Request $request)
+    public function indexEm(Request $request)
+    {
+        return view('payments.list_em', ['request' => $request]);
+    }
+
+    public function indexData(Request $request, $employee = null)
     {
         if ($request->expectsJson()) {
-            $user = auth()->user();
+            $user = $employee ? $employee->user : auth()->user();
             $payments = $user
                 ->payments()
-                ->select(['id', 'amount', 'customer_id', 'type', 'employee_id']);
+                ->select(['id', 'amount', 'customer_id', 'type', 'employee_id', 'status']);
 
             if ($request->filled('customer')) {
                 $customer = $user->customers()->findOrFail($request->customer);
@@ -26,8 +32,8 @@ class PaymentController extends Controller
             }
 
             if ($request->filled('employee')) {
-                $employee = $user->employees()->findOrFail($request->employee);
-                $payments = $employee->payments();
+                $employee2 = $user->employees()->findOrFail($request->employee);
+                $payments = $employee2->payments();
             }
 
             if ($request->filled('searchQuery') && $request->searchQuery != '#') {
@@ -39,11 +45,30 @@ class PaymentController extends Controller
                 $payments = $payments->where('type', $request->type);
             }
 
+            if ($request->filled('status')) {
+                $payments = $payments->where('status', $request->status);
+            }
+
+            if ($request->filled('date')) {
+                $date = explode(':', $request->date);
+
+                $payments = $payments->whereBetween('created_at', $date);
+            }
+
             $payments = $payments
                 ->orderBy('id', 'DESC')
                 ->with('customer:id,name')
                 ->with('employee:id,name')
                 ->paginate(20, ['*'], 'page', $request->page ?? 1);
+
+            $payments->data = $payments->each(function ($p) {
+                $invoices_paid = [];
+
+                foreach ($p->invoices()->select(['invoices.id', 'invoices.created_at'])->get() as $invoice) {
+                    $invoices_paid[] = "#$invoice->id (" . $invoice->created_at->format('F') . ")";
+                }
+                $p->invoices_paid = implode('<br/>', $invoices_paid);
+            });
 
             return $payments;
         }
@@ -51,13 +76,29 @@ class PaymentController extends Controller
         return false;
     }
 
+    public function indexDataEm(Request $request)
+    {
+        return $this->indexData($request, Employee::getEmployee());
+    }
+
     public function show(Payment $payment)
     {
         //
     }
 
-    public function printOut(Payment $payment)
+    public function printOut(Payment $payment, $employee = null)
     {
-        return view('payments.print', ['payment' => $payment]);
+        $user = $employee ? $employee->user : auth()->user();
+
+        if ($payment->user_id != $user->id) {
+            abort(404);
+        }
+
+        return view('payments.print', ['payment' => $payment, 'employee' => $employee]);
+    }
+
+    public function printOutEm(Payment $payment)
+    {
+        return $this->printOut($payment, Employee::getEmployee());
     }
 }

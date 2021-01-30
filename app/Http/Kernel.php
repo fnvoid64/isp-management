@@ -2,6 +2,8 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\EmployeeAuth;
+use App\Http\Middleware\EmployeeGuest;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -62,5 +64,7 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'employee.auth' => EmployeeAuth::class,
+        'employee.guest' => EmployeeGuest::class
     ];
 }

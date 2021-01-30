@@ -22,7 +22,7 @@
             <div class="card">
                 <div class="card-header">New Employee</div>
                 <div class="card-body">
-                    <form method="post" action="{{ route('employees.create') }}">
+                    <form method="post" action="{{ route('employees.create') }}" enctype="multipart/form-data">
                         @csrf
 
                         <div class="row">
@@ -60,6 +60,18 @@
                                         <option value="{{ \App\Models\Employee::ROLE_COLLECTOR }}">Collector</option>
                                     </select>
                                 </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-2">
+                                            <img :src="profile_photo" alt="" v-if="profile_photo" class="rounded-circle img-fluid">
+                                            <img src="/assets/images/profile-min.png" alt="" v-else="profile_photo" class="rounded-circle img-fluid">
+                                        </div>
+                                        <div class="col-10">
+                                            <label>Profile Picture</label>
+                                            <input type="file" name="photo" class="form-control" @change="onFileChange">
+                                        </div>
+                                    </div>
+                                </div>
                                 <h4 class="border-bottom my-3 py-3">Login Info</h4>
                                 <div class="form-group">
                                     <label>Employee Username</label>
@@ -93,8 +105,40 @@
 @endsection
 
 @section('scripts')
+    <script src="https://unpkg.com/vue@next"></script>
     <script src="/assets/libs/select2/js/select2.min.js"></script>
     <script>
+        const App = {
+            delimiters: ['[[', ']]'],
+            data() {
+                return {
+                    profile_photo: null
+                }
+            },
+            methods: {
+                onFileChange(e) {
+                    var files = e.target.files || e.dataTransfer.files;
+                    if (!files.length)
+                        return;
+                    this.createImage(files[0]);
+                },
+                createImage(file) {
+                    var profile_photo = new Image();
+                    var reader = new FileReader();
+                    var vm = this;
+
+                    reader.onload = (e) => {
+                        vm.profile_photo = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                },
+                removeImage: function (e) {
+                    this.profile_photo = null;
+                }
+            }
+        }
+
+        Vue.createApp(App).mount('#vue');
         $('.select2').select2();
     </script>
 @endsection

@@ -61,9 +61,16 @@ class EmployeeController extends Controller
             'mobile' => ['bail', 'required', 'numeric', 'digits:11', 'unique:employees'],
             'nid' => ['bail', 'nullable', 'numeric', 'unique:employees'],
             'address' => ['required'],
-            'username' => ['bail', 'required', 'string', 'max:255', 'unique:employees'],
+            'photo' => ['bail', 'nullable', 'image', 'max:2048'],
+            'username' => ['bail', 'required', 'alpha_num', 'max:255', 'unique:employees'],
             'password' => ['bail', 'required', 'string', 'confirmed']
         ]);
+
+        $photo = null;
+        if ($request->has('photo')) {
+            $photo = $request->file('photo')->store('employee', 'public');
+        }
+
         $employee = auth()->user()->employees()->create([
             'name' => $request->name,
             'f_name' => $request->f_name,
@@ -73,7 +80,8 @@ class EmployeeController extends Controller
             'role' => $request->role,
             'address' => $request->address,
             'username' => $request->username,
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
+            'photo' => $photo
         ]);
 
         return redirect()
@@ -212,9 +220,56 @@ class EmployeeController extends Controller
         }
 
         if ($employee->delete()) {
-            return redirect(route('customers'))->with('message', 'Employee successfully deleted!');
+            return redirect(route('employees'))->with('message', 'Employee successfully deleted!');
         }
 
         return redirect()->back()->withErrors(['errors' => 'Delete ERROR!']);
+    }
+
+    public function loginForm()
+    {
+        return view('auth.employee_login');
+    }
+
+    public function login(Request $request)
+    {
+        $request->validate([
+            'username' => ['required', 'string'],
+            'password' => ['required', 'string']
+        ]);
+
+        $employee = Employee::where([
+            'username' => $request->username,
+        ])->first();
+
+        if (!$employee) {
+            return redirect()
+                ->back()
+                ->withErrors(['errors' => 'Username or password is wrong!']);
+        }
+
+        if (!Hash::check($request->password, $employee->password)) {
+            return redirect()
+                ->back()
+                ->withErrors(['errors' => 'Username or password is wrong!']);
+        }
+
+        if ($employee->status != Employee::STATUS_ACTIVE) {
+            return redirect()
+                ->back()
+                ->withErrors(['errors' => 'Account is not activated by admin!']);
+        }
+
+        $request->session()->regenerate();
+        $request->session()->put('employee_id', $employee->id);
+        Employee::setEmployee($employee->id);
+
+        return redirect(route('dashboard_v2'));
+    }
+
+    public function logout()
+    {
+        session()->forget('employee_id');
+        return redirect(route('employee_login'));
     }
 }

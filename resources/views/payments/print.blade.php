@@ -33,8 +33,8 @@
 </head>
 <body>
     <div class="header">
-        <div class="logo">SB Cable Limited</div>
-        <div class="info">Shoilmary Bazar <b>Mobile:</b> 0{{ ($user = auth()->user())->mobile }}</div>
+        <div class="logo">{{ ($user = $employee ? $employee->user : auth()->user())->company_name }}</div>
+        <div class="info">{{ $user->address }} <b>Mobile:</b> 0{{ $user->mobile }}</div>
     </div>
     <div class="content">
         <div class="line">

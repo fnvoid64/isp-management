@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Login</title>
+    <title>Employee Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Pranto" name="author" />
     <!-- App favicon -->
@@ -27,7 +27,6 @@
             });
         }
     </script>
-
 </head>
 
 <body>
@@ -51,11 +50,11 @@
 
                             @include('includes.errors')
 
-                            <form class="form-horizontal mt-4" method="post" action="{{ route('login') }}">
+                            <form class="form-horizontal mt-4" method="post" action="{{ route('employee_login') }}">
                                 @csrf
                                 <div class="form-group">
-                                    <label for="email">Email</label>
-                                    <input type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="Enter email">
+                                    <label for="email">Username</label>
+                                    <input type="text" class="form-control" name="username" value="{{ old('username') }}" placeholder="Enter username">
                                 </div>
 
                                 <div class="form-group">
@@ -63,16 +62,8 @@
                                     <input type="password" class="form-control" name="password" placeholder="Enter password">
                                 </div>
 
-                                <div class="form-group row">
-                                    <div class="col-sm-6">
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" name="remember" value="1">
-                                            <label class="custom-control-label" for="remember">Remember me</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6 text-right">
-                                        <button class="btn btn-primary w-md waves-effect waves-light" type="submit">Log In</button>
-                                    </div>
+                                <div class="form-group text-center">
+                                    <button class="btn btn-primary btn-block w-md waves-effect waves-light" type="submit">Log In</button>
                                 </div>
                             </form>
                         </div>

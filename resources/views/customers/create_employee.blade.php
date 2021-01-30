@@ -1,5 +1,5 @@
-@extends('layouts.app')
-@section('title', 'Add Customers')
+@extends('layouts.employee')
+@section('title', 'Apply New Customer')
 
 @section('content')
     <div class="row align-items-center">
@@ -7,9 +7,9 @@
             <div class="page-title-box">
                 <h4 class="font-size-18">Customers</h4>
                 <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('customers') }}">Customers</a></li>
-                    <li class="breadcrumb-item active">New Customer</li>
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard_v2') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('employee_customers') }}">Customers</a></li>
+                    <li class="breadcrumb-item active">Apply New Customer</li>
                 </ol>
             </div>
         </div>
@@ -20,9 +20,9 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header">New Customer</div>
+                <div class="card-header">Apply New Customer</div>
                 <div class="card-body">
-                    <form method="post" action="{{ route('customers.create') }}">
+                    <form method="post" action="{{ route('employee_customers.create') }}">
                         @csrf
 
                         <div class="row">
@@ -55,7 +55,7 @@
                             <div class="col-sm">
                                 <div class="form-group">
                                     <label for="area">Area</label>
-                                    @php $user = auth()->user(); @endphp
+                                    @php $user = \App\Models\Employee::getEmployee()->user; @endphp
                                     <select name="area" class="select2 form-control" data-placeholder="Select Area">
                                         <option value="">Select Area</option>
                                         @foreach($user->areas()->get() as $area)
@@ -89,17 +89,10 @@
                                     <input type="text" name="net_pass" class="form-control" placeholder="Broadband PPPoE/Other Password">
                                 </div>
                             </div>
+
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <div style="display: flex; align-content: center;">
-                                        <input type="checkbox" id="switch3" name="no_invoice" switch="bool">
-                                        Don't create invoice? <label for="switch3" data-on-label="Yes" data-off-label="No" class="ml-2"></label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-12">
-                                <div class="form-group">
-                                    <button class="btn btn-success btn-block" type="submit">Create Customer</button>
+                                    <button class="btn btn-success btn-block" type="submit">Apply New Customer</button>
                                 </div>
                             </div>
                         </div>

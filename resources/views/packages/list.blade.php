@@ -53,7 +53,7 @@
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
-                                <th>ID</th>
+                                <th>#ID</th>
                                 <th>Name</th>
                                 <th>Type</th>
                                 <th>Buying Price</th>
@@ -63,7 +63,7 @@
                                 </thead>
                                 <tbody>
                                 <tr v-for="item in items.data" :key="item.id">
-                                    <td>[[ item.id ]]</td>
+                                    <td>#[[ item.id ]]</td>
                                     <td>[[ item.name ]]</td>
                                     <td>[[ item.type == {{ \App\Models\Package::TYPE_BROADBAND }} ? 'Broadband' : 'Cable TV' ]]</td>
                                     <td>BDT [[ item.buying_price ]]</td>

@@ -1,20 +1,20 @@
-@extends('layouts.app')
-@section('title', 'Employees')
+@extends('layouts.employee')
+@section('title', 'Customers')
 
 @section('content')
     <div class="row align-items-center">
         <div class="col">
             <div class="page-title-box">
-                <h4 class="font-size-18">Employees</h4>
+                <h4 class="font-size-18">Customers</h4>
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Employees</li>
+                    <li class="breadcrumb-item active">Customers</li>
                 </ol>
             </div>
         </div>
         <div class="col">
-            <a href="{{ route('employees.create') }}">
-                <button class="btn btn-success float-right">Add Employee</button>
+            <a href="{{ route('employee_customers.create') }}">
+                <button class="btn btn-success float-right">Apply New Customer</button>
             </a>
         </div>
     </div>
@@ -31,15 +31,43 @@
                             <div class="spinner-grow spinner-grow-sm text-success mr-1" role="status" v-if="pageLoading">
                                 <span class="sr-only">Loading...</span>
                             </div>
-                            Employee List
+                            Customer List
                         </div>
 
                         <div class="col-auto">
                             <select class="form-control form-control-sm" v-model="filters.status">
                                 <option value="">Status</option>
-                                <option value="{{ \App\Models\Employee::STATUS_ACTIVE }}">Active</option>
-                                <option value="{{ \App\Models\Employee::STATUS_PENDING }}">Pending</option>
-                                <option value="{{ \App\Models\Employee::STATUS_DISABLED }}">Disabled</option>
+                                <option value="{{ \App\Models\Customer::STATUS_ACTIVE }}">Active</option>
+                                <option value="{{ \App\Models\Customer::STATUS_PENDING }}">Pending</option>
+                                <option value="{{ \App\Models\Customer::STATUS_DISABLED }}">Disabled</option>
+                            </select>
+                        </div>
+
+                        <div class="col-auto">
+                            <select class="form-control form-control-sm" v-model="filters.area">
+                                <option value="">Area</option>
+                                @php $user = \App\Models\Employee::getEmployee()->user @endphp
+                                @foreach($user->areas()->get() as $area)
+                                    <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-auto">
+                            <select class="form-control form-control-sm" v-model="filters.connectionPoint">
+                                <option value="">Connection Point</option>
+                                @foreach($user->connection_points()->get() as $connection_point)
+                                    <option value="{{ $connection_point->id }}">{{ $connection_point->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-auto">
+                            <select class="form-control form-control-sm" v-model="filters.package">
+                                <option value="">Package</option>
+                                @foreach($user->packages()->get() as $package)
+                                    <option value="{{ $package->id }}">{{ $package->name }} ({{ $package->type == \App\Models\Package::TYPE_BROADBAND ? 'BroadBand' : 'Cable Tv' }})</option>
+                                @endforeach
                             </select>
                         </div>
 
@@ -54,34 +82,30 @@
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
-                                <th>#ID</th>
+                                <th>ID</th>
                                 <th>Name</th>
                                 <th>Mobile</th>
                                 <th>Address</th>
                                 <th>Status</th>
-                                <th>Collections</th>
+                                <th>Dues</th>
                                 <th>Actions</th>
                                 </thead>
                                 <tbody>
                                 <tr v-for="item in items.data" :key="item.id">
-                                    <td>#[[ item.id ]]</td>
+                                    <td>[[ item.id ]]</td>
                                     <td>[[ item.name ]]</td>
                                     <td>0[[ item.mobile ]]</td>
                                     <td>[[ item.address ]]</td>
                                     <td>
-                                        <span class="badge badge-success" v-if="item.status === {{ \App\Models\Employee::STATUS_ACTIVE }}">Active</span>
-                                        <span class="badge badge-warning" v-if="item.status === {{ \App\Models\Employee::STATUS_PENDING }}">Pending</span>
-                                        <span class="badge badge-danger" v-if="item.status === {{ \App\Models\Employee::STATUS_DISABLED }}">Disabled</span>
+                                        <span class="badge badge-success" v-if="item.status === {{ \App\Models\Customer::STATUS_ACTIVE }}">Active</span>
+                                        <span class="badge badge-warning" v-if="item.status === {{ \App\Models\Customer::STATUS_PENDING }}">Pending</span>
+                                        <span class="badge badge-danger" v-if="item.status === {{ \App\Models\Customer::STATUS_DISABLED }}">Disabled</span>
                                     </td>
-                                    <td>BDT [[ item.collection_count ]]</td>
+                                    <td>[[ item.dues ]]</td>
                                     <td>
-                                        <a :href="`/dashboard/employees/${item.id}`">
+                                        <a :href="`/dashboard_v2/customers/${item.id}`">
                                             <button class="btn btn-success btn-sm">View</button>
                                         </a>
-                                        <a :href="`/dashboard/employees/${item.id}/edit`">
-                                            <button class="btn btn-primary btn-sm ml-1">Edit</button>
-                                        </a>
-                                        <button class="btn btn-danger btn-sm ml-1" @click="deleteItem(item.id, item.name)">Delete</button>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -119,7 +143,7 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
     <script>
-        const url = '{{ route('employees') }}';
+        const url = '{{ route('employee_customers') }}';
         const router = VueRouter.createRouter({
             history: VueRouter.createWebHistory(),
             routes: [],
@@ -132,6 +156,9 @@
                     items: null,
                     filters: {
                         status: '{{ $request->status }}',
+                        area: '{{ $request->area }}',
+                        connectionPoint: '{{ $request->connectionPoint }}',
+                        package: '{{ $request->package }}',
                         searchQuery: '{{ $request->searchQuery }}',
                         page: {{ $request->page ?? 1 }},
                     },
@@ -147,7 +174,7 @@
                     axios.post(url, this.filters).then(response => {
                         this.items = response.data;
                         if (update) {
-                            router.push({ path: 'employees', query: this.filters});
+                            router.push({ path: 'customers', query: this.filters});
                         }
 
                         this.pageLoading = false;
@@ -155,27 +182,6 @@
                         //console.log(error);
                         this.pageLoading = false;
                     });
-                },
-                deleteItem(id, name) {
-                    Swal.fire({
-                        title: 'Are you sure?',
-                        icon: 'danger',
-                        html:`<form method="post" action="/dashboard/employees/${id}/delete">
-                            @csrf
-                        @method('DELETE')
-                        <p>Are you sure you want to delete employee ${name}?</p>
-                        <div class="form-group">
-                        <input type="number" name="pin" class="form-control" placeholder="PIN" required>
-                        </div>
-                        <div class="form-group">
-                        <button class="btn btn-danger btn-block">Delete</button>
-                        </div>
-                        </form>`,
-                        showCloseButton: true,
-                        showCancelButton: false,
-                        focusConfirm: false,
-                        showConfirmButton: false
-                    })
                 }
             },
             watch: {

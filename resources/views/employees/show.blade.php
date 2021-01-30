@@ -98,6 +98,11 @@
                                 </a>
                             </p>
                             <p>
+                                <a href="{{ route('jobs.create') }}?employee={{ $employee->id }}">
+                                    <button class="btn btn-info btn-block">Assign Job</button>
+                                </a>
+                            </p>
+                            <p>
                                 <button class="btn btn-success btn-block">View Payments</button>
                             </p>
                             <p>
@@ -158,8 +163,9 @@
                     }).then(response => {
                         this.status = response.data;
                         this.pageLoading = false;
+                        showAlertMsg('Employee status changed!');
                     }).catch(function (error) {
-                        console.log(error);
+                        showAlertMsg('Cannot change employee status', 'error');
                         this.pageLoading = false;
                     });
                 }
