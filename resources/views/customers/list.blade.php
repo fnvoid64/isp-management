@@ -32,6 +32,8 @@
                                 <span class="sr-only">Loading...</span>
                             </div>
                             Customer List
+                            <span v-if="items">([[ items.total ]])</span>
+                            <button class="btn btn-dark btn-sm" v-if="items && items.total > 0" @click="exportPDF">Export</button>
                         </div>
 
                         <div class="col-auto">
@@ -80,7 +82,7 @@
                 <div class="card-body">
                     <div v-if="items && items.total !== 0">
                         <div class="table-responsive">
-                            <table class="table table-striped">
+                            <table class="table table-striped" id="table">
                                 <thead>
                                 <th>#ID</th>
                                 <th>Name</th>
@@ -145,6 +147,8 @@
     <script src="https://unpkg.com/vue@next"></script>
     <script src="https://unpkg.com/vue-router@next"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.3.4/jspdf.plugin.autotable.min.js"></script>
 
     <script>
         const url = '{{ route('customers') }}';
@@ -207,6 +211,34 @@
                         focusConfirm: false,
                         showConfirmButton: false
                     })
+                },
+                exportPDF() {
+                    var vm = this
+                    var columns = [
+                        {title: "#ID", dataKey: "id"},
+                        {title: "Name", dataKey: "name"},
+                        {title: "Mobile", dataKey: "mobile"},
+                        {title: "Address", dataKey: "address"},
+                        {title: "Status", dataKey: "status"},
+                        {title: "Dues", dataKey: "dues"},
+                    ];
+                    var doc = new jsPDF('p', 'pt');
+                    doc.text('Customer List', 40, 40);
+                    doc.autoTable(columns, vm.items.data.map(function (e) {
+                        if (e.status === 1) {
+                            e.status = 'Active';
+                        } else if(e.status === 2) {
+                            e.status = 'Pending';
+                        } else {
+                            e.status = 'Disabled';
+                        }
+
+                        e.mobile = `0${e.mobile}`;
+                        return e;
+                    }), {
+                        margin: {top: 60},
+                    });
+                    doc.save('customers.pdf');
                 }
             },
             watch: {

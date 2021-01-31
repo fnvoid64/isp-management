@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-US">
 <head>
     <meta charset="utf-8" />
     <title>@yield('title', config('APP_NAME'))</title>
@@ -67,7 +67,6 @@
 </head>
 
 <body data-sidebar="dark">
-
 <!-- Begin page -->
 <div id="layout-wrapper">
     @php
