@@ -49,7 +49,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="address">Address</label>
-                                    <textarea class="form-control" name="address" placeholder="Customer Address"></textarea>
+                                    <input type="text" class="form-control" name="address" placeholder="Customer Address">
                                 </div>
                             </div>
                             <div class="col-sm">
@@ -90,11 +90,16 @@
                                 </div>
                             </div>
                             <div class="col-sm-12">
+                                <h4 class="my-2">
+                                    Create Invoice (Optional)
+                                </h4>
                                 <div class="form-group">
-                                    <div style="display: flex; align-content: center;">
-                                        <input type="checkbox" id="switch3" name="no_invoice" switch="bool">
-                                        Don't create invoice? <label for="switch3" data-on-label="Yes" data-off-label="No" class="ml-2"></label>
-                                    </div>
+                                    <label>Invoice Amount</label>
+                                    <input type="number" name="amount" class="form-control" placeholder="Invoice Amount">
+                                </div>
+                                <div class="form-group">
+                                    <label>Invoice Comment</label>
+                                    <input type="text" name="comment" class="form-control" placeholder="Invoice Comment">
                                 </div>
                             </div>
                             <div class="col-sm-12">

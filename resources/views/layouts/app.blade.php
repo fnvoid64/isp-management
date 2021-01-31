@@ -99,7 +99,7 @@
             <div class="d-flex">
                 <!-- LOGO -->
                 <div class="navbar-brand-box">
-                    <a href="index.html" class="logo logo-dark">
+                    <a href="{{ route('dashboard') }}" class="logo logo-dark">
                                 <span class="logo-sm logoText">
                                     {{ strtoupper($user->company_short) }}
                                 </span>
@@ -108,7 +108,7 @@
                                 </span>
                     </a>
 
-                    <a href="index.html" class="logo logo-light">
+                    <a href="{{ route('dashboard') }}" class="logo logo-light">
                                 <span class="logo-sm logoText">
                                     {{ strtoupper($user->company_short) }}
                                 </span>
@@ -364,6 +364,9 @@
                 <div class="row mt-2">
                     <a href="javascript:history.back()" class="btn btn-secondary">
                         <i class="ti-arrow-left"></i> Go Back
+                    </a>
+                    <a href="javascript:history.forward()" class="btn btn-secondary ml-2">
+                        Go Forward <i class="ti-arrow-right"></i>
                     </a>
                 </div>
                 @yield('content')

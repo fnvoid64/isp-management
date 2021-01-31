@@ -99,6 +99,8 @@ class CustomerController extends Controller
             'package' => ['required', 'array'],
             'net_user' => ['nullable', 'string', 'max:255'],
             'net_pass' => ['nullable', 'string', 'max:255'],
+            'amount' => ['nullable', 'numeric', 'gt:1'],
+            'comment' => ['nullable', 'string']
         ]);
 
         $user = $employee ? $employee->user : auth()->user();
@@ -124,6 +126,15 @@ class CustomerController extends Controller
         //if (!$request->filled('no_invoice')) {
             //$this->generateInvoice($user, $customer, $request->package);
         //}
+
+        if ($request->filled('amount') && !$employee) {
+            $invoice = $user->invoices()->create([
+                'customer_id' => $customer->id,
+                'amount' => $request->amount,
+                'due' => $request->amount,
+                'comment' => $request->comment
+            ]);
+        }
 
         return redirect()
             ->back()
