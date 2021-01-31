@@ -277,6 +277,10 @@
                         'Cancelled Invoices' => route('invoices') . "?status=" . \App\Models\Invoice::STATUS_CANCELLED
                     ]
                 ],
+                'Statistics' => [
+                    'i' => 'pie-chart',
+                    'r' => route('statistics')
+                ],
                 'Employees' => [
                     'i' => 'user',
                     'r' => [

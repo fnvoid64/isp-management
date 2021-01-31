@@ -27,9 +27,9 @@
                         </div>
 
                         <div class="col-auto">
-                            <button type="button" class="btn btn-secondary btn-sm" id="daterange-btn">
-                                <i class="ti-calendar"></i> <span>Select Date</span>
-                                <i class="ti-arrow-down"></i>
+                            <button type="button" class="btn btn-dark btn-sm" id="daterange-btn">
+                                <i class="ti-calendar mr-1"></i> <span>Select Date</span>
+                                <i class="ml-1 ti-arrow-down"></i>
                             </button>
                         </div>
 
@@ -66,7 +66,7 @@
                                     </td>
                                     <td>
                                         <span class="badge badge-success" v-if="item.status == {{ \App\Models\Payment::STATUS_CONFIRMED }}">Confirmed</span>
-                                        <span class="badge badge-primary" v-else-if="item.status == {{ \App\Models\Payment::STATUS_PENDING }}">Pending</span>
+                                        <span class="badge badge-warning" v-else-if="item.status == {{ \App\Models\Payment::STATUS_PENDING }}">Pending</span>
                                         <span class="badge badge-danger" v-else-if="item.status == {{ \App\Models\Payment::STATUS_REJECTED }}">Rejected</span>
                                     </td>
                                     <td>

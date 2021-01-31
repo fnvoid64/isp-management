@@ -61,15 +61,24 @@
                                 <div class="detail">
                                     <div class="detail-label">Packages</div>
                                     <div class="detail-value">
+                                    @if ($invoice->package_ids)
                                         @foreach(auth()->user()->packages()->whereIn('id', explode(',', $invoice->package_ids))->get() as $package)
                                             {{ $package->name }} (BDT {{ $package->sale_price }}),
                                         @endforeach
+                                    @else
+                                        N/A
+                                    @endif
                                     </div>
                                 </div>
 
                                 <div class="detail">
+                                    <div class="detail-label">Comment</div>
+                                    <div class="detail-value">{{ $invoice->comment ?? 'N/A' }}</div>
+                                </div>
+
+                                <div class="detail">
                                     <div class="detail-label">Created At</div>
-                                    <div class="detail-value">{{ $package->created_at->format('d/m/Y') }}</div>
+                                    <div class="detail-value">{{ $invoice->created_at->format('d/m/Y') }}</div>
                                 </div>
                             </div>
                         </div>

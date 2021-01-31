@@ -47,6 +47,9 @@ Route::middleware('auth')->prefix('/dashboard')->group(function () {
     Route::post('/customers/{customer}/makePayment', [\App\Http\Controllers\CustomerController::class, 'makePayment'])
         ->name('customers.makePayment');
 
+    Route::post('/customers/{customer}/makeInvoice', [\App\Http\Controllers\CustomerController::class, 'makeInvoice'])
+        ->name('customers.makeInvoice');
+
     Route::delete('/customers/{customer}/delete', [\App\Http\Controllers\CustomerController::class, 'destroy'])
         ->name('customers.delete');
 
@@ -114,6 +117,8 @@ Route::middleware('auth')->prefix('/dashboard')->group(function () {
         ->name('payments.show');
     Route::get('/payments/{payment}/print', [\App\Http\Controllers\PaymentController::class, 'printOut'])
         ->name('payments.print');
+    Route::post('/payments/{payment}/changeStatus', [\App\Http\Controllers\PaymentController::class, 'changeStatus'])
+        ->name('payments.changeStatus');
 
     // Employees
     Route::get('/employees', [\App\Http\Controllers\EmployeeController::class, 'index'])

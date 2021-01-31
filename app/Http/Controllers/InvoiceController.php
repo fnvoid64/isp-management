@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\Invoice;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
@@ -109,7 +110,8 @@ class InvoiceController extends Controller
             'employee_id' => $employee ? $employee->id : null,
             'customer_id' => $invoice->customer->id,
             'amount' => $request->amount,
-            'type' => $request->type
+            'type' => $request->type,
+            'status' => Payment::STATUS_CONFIRMED
         ]);
 
         if ($request->amount == $invoice->due) {

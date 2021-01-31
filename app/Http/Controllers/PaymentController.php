@@ -83,7 +83,38 @@ class PaymentController extends Controller
 
     public function show(Payment $payment)
     {
-        //
+        $user = auth()->user();
+
+        if ($payment->user_id != $user->id) {
+            abort(404);
+        }
+
+        return view('payments.show', ['payment' => $payment]);
+    }
+
+    public function changeStatus(Request $request, Payment $payment)
+    {
+        $user = auth()->user();
+
+        if ($payment->user_id != $user->id) {
+            abort(404);
+        }
+
+        $request->validate([
+            'status' => ['bail', 'required', 'numeric', 'in:1,0'],
+            'pin' => ['bail', 'required', 'numeric']
+        ]);
+
+        if ($user->pin != $request->pin) {
+            return redirect()->back()->withErrors(['errors' => 'Wrong PIN!']);
+        }
+
+        $payment->status = $request->status;
+        $payment->save();
+
+        return redirect()
+            ->back()
+            ->with('message', "Payment " . ($request->status == Payment::STATUS_CONFIRMED ? 'confirm' : 'reject') . "ed successfully!");
     }
 
     public function printOut(Payment $payment, $employee = null)

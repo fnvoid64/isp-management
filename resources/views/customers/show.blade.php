@@ -140,6 +140,9 @@
                                 </a>
                             </p>
                             <p>
+                                <button class="btn btn-dark btn-block" data-toggle="modal" data-target="#invoice">Make Invoice</button>
+                            </p>
+                            <p>
                                 <a href="{{ route('sms.create') }}?customer={{ $customer->id }}">
                                     <button class="btn btn-info btn-block">Send SMS</button>
                                 </a>
@@ -182,6 +185,36 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-success">Make Payment</button>
                 </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="invoice" tabindex="-1" role="dialog" aria-labelledby="invoice" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="payment">Make Invoice</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="post" action="{{ route('customers.makeInvoice', ['customer' => $customer->id]) }}">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Amount (BDT)</label>
+                            <input type="number" class="form-control" name="amount" placeholder="Invoice Amount" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Comment</label>
+                            <textarea name="comment" class="form-control" placeholder="Invoice comment"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Make Invoice</button>
+                    </div>
                 </form>
             </div>
         </div>

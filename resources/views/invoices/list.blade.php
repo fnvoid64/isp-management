@@ -40,9 +40,9 @@
                         </div>
 
                         <div class="col-auto">
-                            <button type="button" class="btn btn-secondary btn-sm" id="daterange-btn">
-                                <i class="ti-calendar"></i> <span>Select Date</span>
-                                <i class="ti-arrow-down"></i>
+                            <button type="button" class="btn btn-dark btn-sm" id="daterange-btn">
+                                <i class="ti-calendar mr-1"></i> <span>Select Date</span>
+                                <i class="ml-1 ti-arrow-down"></i>
                             </button>
                         </div>
                         <div class="col-auto">
@@ -83,9 +83,7 @@
                                         <a :href="`/dashboard/invoices/${item.id}`">
                                             <button class="btn btn-primary btn-sm ml-1">View</button>
                                         </a>
-                                        <a :href="`/dashboard/invoices/${item.id}/pay`" v-if="item.due > 0">
-                                            <button class="btn btn-success btn-sm ml-1">Pay</button>
-                                        </a>
+                                        <button class="btn btn-success btn-sm ml-1" @click="pay(item.id)">Pay</button>
                                         <button class="btn btn-danger btn-sm ml-1" @click="deleteItem(item.id)">Cancel</button>
                                     </td>
                                 </tr>
@@ -137,6 +135,7 @@
                 return {
                     items: null,
                     filters: {
+                        customer: '{{ $request->customer }}',
                         date: '{{ $request->date }}',
                         status: '{{ $request->status }}',
                         searchQuery: '{{ $request->searchQuery }}',
@@ -176,6 +175,34 @@
                     </div>
                     <div class="form-group">
                     <button class="btn btn-danger btn-block">Cancel</button>
+                    </div>
+                    </form>`,
+                        showCloseButton: true,
+                        showCancelButton: false,
+                        focusConfirm: false,
+                        showConfirmButton: false
+                    })
+                },
+                pay(id) {
+                    Swal.fire({
+                        title: 'Make Payment',
+                        icon: 'success',
+                        html:`<form method="post" action="/dashboard/invoices/${id}/pay">
+                            @csrf
+                        <div class="form-group">
+                                <label>Amount (BDT)</label>
+                                <input type="number" class="form-control" name="amount" placeholder="Payment Amount" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Payment Type</label>
+                                <select name="type" class="form-control">
+                                    <option value="{{ \App\Models\Payment::TYPE_CASH }}">Cash</option>
+                                <option value="{{ \App\Models\Payment::TYPE_MOBILE_BANK }}">bKash/Rocket/Nagad Etc</option>
+                                <option value="{{ \App\Models\Payment::TYPE_BANK }}">Bank</option>
+                            </select>
+                        </div>
+                    <div class="form-group">
+                    <button class="btn btn-success btn-block">Pay</button>
                     </div>
                     </form>`,
                         showCloseButton: true,

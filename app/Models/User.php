@@ -25,7 +25,10 @@ class User extends Authenticatable
         'nid',
         'mobile',
         'address',
-        'photo'
+        'photo',
+        'pin',
+        'company_name',
+        'company_short'
     ];
 
     /**

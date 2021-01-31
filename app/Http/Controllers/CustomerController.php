@@ -118,10 +118,12 @@ class CustomerController extends Controller
             'net_pass' => $request->net_pass
         ]);
 
+        $customer->packages()->attach($request->package);
+
         // Generate Invoice
-        if (!$request->filled('no_invoice')) {
-            $this->generateInvoice($user, $customer, $request->package);
-        }
+        //if (!$request->filled('no_invoice')) {
+            //$this->generateInvoice($user, $customer, $request->package);
+        //}
 
         return redirect()
             ->back()
@@ -133,28 +135,25 @@ class CustomerController extends Controller
         return $this->store($request, Employee::getEmployee());
     }
 
-    protected function generateInvoice($user, Customer $customer, array $packages, bool $detach = false): void
+    protected function generateInvoice($user, Customer $customer): void
     {
         $billableDays = date("t") - date("j");
         $billableAmount = 0;
+        $packages = $customer->packages()->get();
 
         foreach ($packages as $package) {
-            $package = $user->packages()->findOrFail($package);
+            //$package = $user->packages()->findOrFail($package->id);
             $billableAmount += round($billableDays * ($package->sale_price / 30), 2);
         }
 
-        if ($detach) {
-            $customer->packages()->detach();
+        if ($billableAmount > 0) {
+            $invoice = $user->invoices()->create([
+                'customer_id' => $customer->id,
+                'amount' => $billableAmount,
+                'due' => $billableAmount,
+                'package_ids' => implode(',', $packages->pluck('id')->toArray())
+            ]);
         }
-
-        $customer->packages()->attach($packages);
-
-        $invoice = $user->invoices()->create([
-            'customer_id' => $customer->id,
-            'amount' => $billableAmount,
-            'due' => $billableAmount,
-            'package_ids' => implode(',', $packages)
-        ]);
     }
 
     public function show(Customer $customer)
@@ -238,11 +237,14 @@ class CustomerController extends Controller
         $customer->connection_point_id = $request->connection_point ?? null;
         $customer->net_user = $request->net_user;
         $customer->net_pass = $request->net_pass;
-        $customer->save();
 
         if ($request->package != $packages) {
-            $this->generateInvoice(auth()->user(), $customer, $request->package, true);
+            $customer->status = Customer::STATUS_PENDING;
+            $customer->packages()->detach();
+            $customer->packages()->attach($request->package);
         }
+
+        $customer->save();
 
         return redirect()
             ->back()
@@ -264,6 +266,10 @@ class CustomerController extends Controller
 
             $customer->status = $request->status;
             $customer->save();
+
+            if ($customer->status == Customer::STATUS_ACTIVE && $request->status == Customer::STATUS_ACTIVE) {
+                $this->generateInvoice($user, $customer);
+            }
 
             return $customer->status;
         }
@@ -327,6 +333,31 @@ class CustomerController extends Controller
         } else {
             return redirect()->back()->withErrors('There is no due!');
         }
+    }
+
+    public function makeInvoice(Request $request, Customer $customer)
+    {
+        $user = auth()->user();
+
+        if ($customer->user_id != $user->id) {
+            abort(404);
+        }
+
+        $request->validate([
+            'amount' => ['bail', 'required', 'numeric', 'gt:1'],
+            'comment' => ['nullable']
+        ]);
+
+        $invoice = $user->invoices()->create([
+            'customer_id' => $customer->id,
+            'amount' => $request->amount,
+            'due' => $request->amount,
+            'comment' => $request->comment
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('message', "Invoice of amount BDT $invoice->amount created successfully!");
     }
 
     public function makePaymentEmployee(Request $request, Customer $customer)

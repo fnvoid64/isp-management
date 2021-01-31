@@ -27,9 +27,9 @@
                         </div>
 
                         <div class="col-auto">
-                            <button type="button" class="btn btn-secondary btn-sm" id="daterange-btn">
-                                <i class="ti-calendar"></i> <span>Select Date</span>
-                                <i class="ti-arrow-down"></i>
+                            <button type="button" class="btn btn-dark btn-sm" id="daterange-btn">
+                                <i class="ti-calendar mr-1"></i> <span>Select Date</span>
+                                <i class="ml-1 ti-arrow-down"></i>
                             </button>
                         </div>
                     </div>
