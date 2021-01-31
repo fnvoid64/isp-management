@@ -13,4 +13,3 @@ yarn-error.log
 /.idea
 .env
 .env.example
-/vendor/
