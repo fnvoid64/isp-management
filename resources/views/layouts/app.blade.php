@@ -54,6 +54,12 @@
     <script src="/assets/libs/jquery/jquery.min.js"></script>
 
     <script src="/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+    <link href="https://fonts.maateen.me/kalpurush/font.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Kalpurush', 'Roboto', sans-serif;
+        }
+    </style>
 
     <script>
         function showAlertMsg(msg, type = 'success') {
