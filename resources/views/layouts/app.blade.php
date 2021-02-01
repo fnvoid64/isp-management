@@ -54,10 +54,27 @@
     <script src="/assets/libs/jquery/jquery.min.js"></script>
 
     <script src="/assets/libs/sweetalert2/sweetalert2.min.js"></script>
-    <link href="https://fonts.maateen.me/kalpurush/font.css" rel="stylesheet">
     <style>
+        @font-face {
+            font-family: 'Kalpurush';
+            src: url('/assets/fonts/kalpurush.ttf');
+            font-stretch: normal;
+        }
         body {
             font-family: 'Kalpurush', 'Roboto', sans-serif;
+            font-size: 1em;
+        }
+        .table thead th, label, #sidebar-menu ul li a, .badge {
+            font-weight: 600;
+        }
+        .btn {
+            font-size: 1em;
+        }
+        .btn-sm {
+            font-size: .8em;
+        }
+        .badge {
+            font-size: 0.9em;
         }
     </style>
 
