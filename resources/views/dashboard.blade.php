@@ -10,7 +10,7 @@
                         <div class="float-left mini-stat-img mr-4">
                             <img src="assets/images/services-icon/01.png" alt="">
                         </div>
-                        <h5 class="font-size-16 text-uppercase mt-0 text-white-50">Customers</h5>
+                        <h5 class="font-size-16 text-uppercase mt-0 text-white-50">গ্রাহক</h5>
                         <h4 class="font-weight-medium font-size-24">{{ $data->customer_count }}</h4>
 
                     </div>
@@ -20,7 +20,7 @@
                             <i class="mdi mdi-arrow-right h5"></i>
                         </div>
 
-                        <p class="text-white-50 mb-0 mt-1">View All</p>
+                        <p class="text-white-50 mb-0 mt-1">সব গ্রাহক দেখুন</p>
                     </div>
                     </a>
                 </div>
@@ -33,8 +33,8 @@
                         <div class="float-left mini-stat-img mr-4">
                             <img src="assets/images/services-icon/02.png" alt="">
                         </div>
-                        <h5 class="font-size-16 text-uppercase mt-0 text-white-50">Revenue</h5>
-                        <h4 class="font-weight-medium font-size-24">BDT {{ $data->total_revenue }}</h4>
+                        <h5 class="font-size-16 text-uppercase mt-0 text-white-50">আয়</h5>
+                        <h4 class="font-weight-medium font-size-24">{{ $data->total_revenue }} টাকা</h4>
 
                     </div>
                     <a href="{{ route('payments') }}" class="text-white-50">
@@ -43,7 +43,7 @@
                             <i class="mdi mdi-arrow-right h5"></i>
                         </div>
 
-                        <p class="text-white-50 mb-0 mt-1">All Payments</p>
+                        <p class="text-white-50 mb-0 mt-1">সব আদায় দেখুন</p>
                     </div>
                     </a>
                 </div>
@@ -56,8 +56,8 @@
                         <div class="float-left mini-stat-img mr-4">
                             <img src="assets/images/services-icon/03.png" alt="">
                         </div>
-                        <h5 class="font-size-16 text-uppercase mt-0 text-white-50">Total Dues</h5>
-                        <h4 class="font-weight-medium font-size-24">BDT {{ $data->total_dues }}</h4>
+                        <h5 class="font-size-16 text-uppercase mt-0 text-white-50">বাকি</h5>
+                        <h4 class="font-weight-medium font-size-24">{{ $data->total_dues }} টাকা</h4>
                     </div>
                     <a href="{{ route('invoices') }}?status={{ \App\Models\Invoice::STATUS_UNPAID }}"
                        class="text-white-50">
@@ -66,7 +66,7 @@
                             <i class="mdi mdi-arrow-right h5"></i>
                         </div>
 
-                        <p class="text-white-50 mb-0 mt-1">View Unpaid Invoices</p>
+                        <p class="text-white-50 mb-0 mt-1">সকল বাকি দেখুন</p>
                     </div>
                     </a>
                 </div>
@@ -79,7 +79,7 @@
                         <div class="float-left mini-stat-img mr-4">
                             <img src="assets/images/services-icon/04.png" alt="">
                         </div>
-                        <h5 class="font-size-16 text-uppercase mt-0 text-white-50">Packages</h5>
+                        <h5 class="font-size-16 text-uppercase mt-0 text-white-50">প্যাকেজ</h5>
                         <h4 class="font-weight-medium font-size-24">{{ $data->package_count }}</h4>
                     </div>
                     <a href="{{ route('packages') }}" class="text-white-50">
@@ -88,7 +88,7 @@
                             <i class="mdi mdi-arrow-right h5"></i>
                         </div>
 
-                        <p class="text-white-50 mb-0 mt-1">All packages</p>
+                        <p class="text-white-50 mb-0 mt-1">সব প্যাকেজ দেখুন</p>
                     </div>
                     </a>
                 </div>
@@ -99,7 +99,7 @@
         <div class="col">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title mb-4">Monthly Earning</h4>
+                    <h4 class="card-title mb-4">মাসিক আয়ের তালিকা</h4>
                     <div class="row">
                         <div class="col-lg-7">
                             <div>
@@ -111,9 +111,9 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="text-center">
-                                        <p class="text-muted mb-4">This month</p>
-                                        <h3>BDT {{ $data->this_month_rev }}</h3>
-                                        <p class="text-muted mb-5">This months payments.</p>
+                                        <p class="text-muted mb-4">এই মাসে</p>
+                                        <h3>{{ $data->this_month_rev }} টাকা</h3>
+                                        <p class="text-muted mb-5">এই মাসের আয়</p>
                                         <span class="peity-donut"
                                               data-peity='{ "fill": ["#02a499", "#f2f2f2"], "innerRadius": 28, "radius": 32 }'
                                               data-width="72" data-height="72">{{ $data->this_month_rev }}/{{ $data->total_revenue }}</span>
@@ -121,9 +121,9 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="text-center">
-                                        <p class="text-muted mb-4">Last month</p>
-                                        <h3>BDT {{ $data->last_month_rev }}</h3>
-                                        <p class="text-muted mb-5">Last months payments.</p>
+                                        <p class="text-muted mb-4">গত মাসে</p>
+                                        <h3>{{ $data->last_month_rev }} টাকা</h3>
+                                        <p class="text-muted mb-5">গত মাসের আয়</p>
                                         <span class="peity-donut"
                                               data-peity='{ "fill": ["#02a499", "#f2f2f2"], "innerRadius": 28, "radius": 32 }'
                                               data-width="72" data-height="72">{{ $data->last_month_rev }}/{{ $data->total_revenue }}</span>
@@ -141,17 +141,17 @@
         <div class="col-md-7">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title mb-4">Pending Customers</h4>
+                    <h4 class="card-title mb-4">অপেক্ষমান গ্রাহক তালিকা</h4>
 
                     @if (count($pending_customers))
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
                                 <th>#ID</th>
-                                <th>Name</th>
-                                <th>Mobile</th>
-                                <th>Address</th>
-                                <th>View</th>
+                                <th>নাম</th>
+                                <th>মোবাইল নম্বর</th>
+                                <th>ঠিকানা</th>
+                                <th>দেখুন</th>
                                 </thead>
                                 <tbody>
                                 @foreach($pending_customers as $customer)
@@ -161,7 +161,7 @@
                                         <td>0{{ $customer->mobile }}</td>
                                         <td>{{ $customer->address }}</td>
                                         <td>
-                                            <a class="btn btn-primary btn-sm" href="{{ route('customers.show', ['customer' => $customer->id]) }}">View</a>
+                                            <a class="btn btn-primary btn-sm" href="{{ route('customers.show', ['customer' => $customer->id]) }}">দেখুন</a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -169,10 +169,10 @@
                             </table>
                         </div>
                         <p>
-                            <a class="btn btn-primary btn-sm" href="{{ route('customers') }}?status={{ \App\Models\Customer::STATUS_PENDING }}">View all pending customers</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('customers') }}?status={{ \App\Models\Customer::STATUS_PENDING }}">সব অপেক্ষমান গ্রাহক দেখুন</a>
                         </p>
                     @else
-                        <p>No pending customer found!</p>
+                        <p>কোনো অপেক্ষমান গ্রাহক পাওয়া যায়নি।</p>
                     @endif
                 </div>
             </div>
@@ -180,23 +180,23 @@
         <div class="col-md-5">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title mb-4">Pending Payments</h4>
+                    <h4 class="card-title mb-4">অপেক্ষমান আদায়</h4>
 
                     @if (count($pending_payments))
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
                                 <th>#ID</th>
-                                <th>Amount</th>
-                                <th>Customer</th>
-                                <th>Collected By</th>
-                                <th>View</th>
+                                <th>পরিমান</th>
+                                <th>গ্রাহক</th>
+                                <th>আদায় করেছেন</th>
+                                <th>দেখুন</th>
                                 </thead>
                                 <tbody>
                                 @foreach($pending_payments as $payment)
                                     <tr>
                                         <td>#{{ $payment->id }}</td>
-                                        <td>BDT {{ $payment->amount }}</td>
+                                        <td>{{ $payment->amount }} টাকা</td>
                                         <td>
                                             <a href="{{ route('customers.show', ['customer' => $payment->customer->id]) }}">{{ $payment->customer->name }}</a>
                                         </td>
@@ -204,7 +204,7 @@
                                             <a href="{{ route('employees.show', ['employee' => $payment->employee->id]) }}">{{ $payment->employee->name }}</a>
                                         </td>
                                         <td>
-                                            <a class="btn btn-primary btn-sm" href="{{ route('customers.show', ['customer' => $customer->id]) }}">View</a>
+                                            <a class="btn btn-primary btn-sm" href="{{ route('customers.show', ['customer' => $customer->id]) }}">দেখুন</a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -212,10 +212,10 @@
                             </table>
                         </div>
                         <p>
-                            <a class="btn btn-primary btn-sm" href="{{ route('customers') }}?status={{ \App\Models\Customer::STATUS_PENDING }}">View all pending customers</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('customers') }}?status={{ \App\Models\Customer::STATUS_PENDING }}">সব অপেক্ষমান আদায় দেখুন</a>
                         </p>
                     @else
-                        <p>No pending payment found!</p>
+                        <p>কোনো অপেক্ষমান আদায় পাওয়া যায়নি।</p>
                     @endif
                 </div>
             </div>

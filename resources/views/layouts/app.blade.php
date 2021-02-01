@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <title>@yield('title', config('APP_NAME'))</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+    <meta content="ISP and Cable TV Billing Systems" name="description" />
     <meta content="Pranto" name="author" />
     <!-- App favicon -->
     <link rel="shortcut icon" href="/assets/images/favicon.ico">
@@ -84,9 +84,9 @@
     if ($pending_customers > 0) {
         $notifications[] = [
             'link' => route('customers') . '?status=' . \App\Models\Customer::STATUS_PENDING,
-            'text' => 'There are ' . $pending_customers . ' pending customers. Activate them.',
+            'text' => $pending_customers . ' টি পেন্ডিং গ্রাহক রয়েছেন। তাদের সক্রিয় করুন',
             'icon' => 'account-supervisor-outline',
-            'header' => 'Pending Customers'
+            'header' => 'অপেক্ষমান গ্রাহকরা'
         ];
     }
 
@@ -130,14 +130,14 @@
                 <div class="d-none d-sm-block">
                     <div class="dropdown pt-3 d-inline-block">
                         <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Create <i class="mdi mdi-chevron-down"></i>
+                            তৈরী করুন <i class="mdi mdi-chevron-down"></i>
                         </a>
 
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                            <a class="dropdown-item" href="{{ route('customers.create') }}">Customer</a>
-                            <a class="dropdown-item" href="{{ route('packages.create') }}">Package</a>
-                            <a class="dropdown-item" href="{{ route('areas.create') }}">Area</a>
-                            <a class="dropdown-item" href="{{ route('connection_points.create') }}">Connection Point</a>
+                            <a class="dropdown-item" href="{{ route('customers.create') }}">গ্রাহক</a>
+                            <a class="dropdown-item" href="{{ route('packages.create') }}">প্যাকেজ</a>
+                            <a class="dropdown-item" href="{{ route('areas.create') }}">এলাকা</a>
+                            <a class="dropdown-item" href="{{ route('connection_points.create') }}">সংযোগস্থল</a>
                         </div>
                     </div>
                 </div>
@@ -169,7 +169,7 @@
                         <div class="p-3">
                             <div class="row align-items-center">
                                 <div class="col">
-                                    <h5 class="m-0 font-size-16"> Notifications ({{ $pending_customers + $pending_payments }}) </h5>
+                                    <h5 class="m-0 font-size-16"> বিজ্ঞপ্তি ({{ $pending_customers + $pending_payments }}) </h5>
                                 </div>
                             </div>
                         </div>
@@ -194,7 +194,7 @@
                                 @endforeach
                         @else
                         <div class="p-2 border-top">
-                            No notifications
+                            বিজ্ঞপ্তি নেই
                         </div>
                         @endif
                         </div>
@@ -209,11 +209,11 @@
                     </button>
                     <div class="dropdown-menu dropdown-menu-right">
                         <!-- item-->
-                        <a class="dropdown-item" href="{{ route('profile') }}"><i class="mdi mdi-account-circle font-size-17 align-middle mr-1"></i>Edit Profile</a>
-                        <a class="dropdown-item d-block" href="{{ route('profile.changePassword') }}"><i class="mdi mdi-settings font-size-17 align-middle mr-1"></i> Change Password</a>
+                        <a class="dropdown-item" href="{{ route('profile') }}"><i class="mdi mdi-account-circle font-size-17 align-middle mr-1"></i> প্রোফাইল সম্পাদনা</a>
+                        <a class="dropdown-item d-block" href="{{ route('profile.changePassword') }}"><i class="mdi mdi-settings font-size-17 align-middle mr-1"></i> পাসওয়ার্ড পরিবর্তন</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item text-danger" href="{{ route('logout') }}">
-                            <i class="bx bx-power-off font-size-17 align-middle mr-1 text-danger"></i> Logout
+                            <i class="bx bx-power-off font-size-17 align-middle mr-1 text-danger"></i> বের হয়ে যান
                         </a>
                     </div>
                 </div>
@@ -227,97 +227,97 @@
         <div data-simplebar class="h-100">
             @php
             $_nav_links = [
-                'Dashboard' => [
+                'ড্যাশবোর্ড' => [
                     'i' => 'home',
                     'r' => route('dashboard')
                 ],
-                'Customers' => [
+                'গ্রাহকরা' => [
                     'i' => 'user',
                     'r' => [
-                        'All Customers' => route('customers'),
-                        'Active Customers' => route('customers') . "?status=" . \App\Models\Customer::STATUS_ACTIVE,
-                        'Pending Customers' => route('customers') . "?status=" . \App\Models\Customer::STATUS_PENDING,
-                        'Create Customer' => route('customers.create')
+                        'সব গ্রাহক' => route('customers'),
+                        'সক্রিয় গ্রাহকরা' => route('customers') . "?status=" . \App\Models\Customer::STATUS_ACTIVE,
+                        'অপেক্ষমান গ্রাহকরা' => route('customers') . "?status=" . \App\Models\Customer::STATUS_PENDING,
+                        'গ্রাহক তৈরি করুন' => route('customers.create')
                     ]
                 ],
-                'Packages' => [
+                'প্যাকেজ' => [
                     'i' => 'package',
                     'r' => [
-                        'All Packages' => route('packages'),
-                        'BroadBand Packages' => route('packages') . "?type=" . \App\Models\Package::TYPE_BROADBAND,
-                        'Cable TV Packages' => route('packages') . "?type=" . \App\Models\Package::TYPE_CABLE_TV,
-                        'Create Package' => route('packages.create')
+                        'সমস্ত প্যাকেজ' => route('packages'),
+                        'ব্রডব্যান্ড প্যাকেজ' => route('packages') . "?type=" . \App\Models\Package::TYPE_BROADBAND,
+                        'কেবল টিভি প্যাকেজ' => route('packages') . "?type=" . \App\Models\Package::TYPE_CABLE_TV,
+                        'প্যাকেজ তৈরি করুন' => route('packages.create')
                     ]
                 ],
-                'Areas' => [
+                'এলাকা' => [
                     'i' => 'location-pin',
                     'r' => [
-                        'All Areas' => route('areas'),
-                        'Create Area' => route('areas.create')
+                        'সব এলাকা' => route('areas'),
+                        'এলাকা তৈরি করুন' => route('areas.create')
                     ]
                 ],
-                'Connection Points' => [
+                'সংযোগস্থল' => [
                     'i' => 'direction',
                     'r' => [
-                        'All Connection Points' => route('connection_points'),
-                        'Create Connection Point' => route('connection_points.create')
+                        'সব সংযোগস্থল' => route('connection_points'),
+                        'সংযোগস্থল তৈরি করুন' => route('connection_points.create')
                     ]
                 ],
-                'Payments' => [
+                'আদায়' => [
                     'i' => 'money',
                     'r' => [
-                        'All Payments' => route('payments'),
-                        'Cash Payments' => route('payments') . "?type=" . \App\Models\Payment::TYPE_CASH,
-                        'bKash/Rocket/Nagad Payments' => route('payments') . "?type=" . \App\Models\Payment::TYPE_MOBILE_BANK,
-                        'Bank Payments' => route('payments') . "?type=" . \App\Models\Payment::TYPE_BANK
+                        'সব আদায়' => route('payments'),
+                        'ক্যাশ আদায়' => route('payments') . "?type=" . \App\Models\Payment::TYPE_CASH,
+                        'বিকাশ/নগদ/রকেট আদায়' => route('payments') . "?type=" . \App\Models\Payment::TYPE_MOBILE_BANK,
+                        'ব্যাংক আদায়' => route('payments') . "?type=" . \App\Models\Payment::TYPE_BANK
                     ]
                 ],
-                'Invoices' => [
+                'ইনভয়েস' => [
                     'i' => 'file',
                     'r' => [
-                        'All Invoices' => route('invoices'),
-                        'Paid Invoices' => route('invoices') . "?status=" . \App\Models\Invoice::STATUS_PAID,
-                        'Unpaid Invoices' => route('invoices') . "?status=" . \App\Models\Invoice::STATUS_UNPAID,
-                        'Partially Paid Invoices' => route('invoices') . "?status=" . \App\Models\Invoice::STATUS_PARTIAL_PAID,
-                        'Cancelled Invoices' => route('invoices') . "?status=" . \App\Models\Invoice::STATUS_CANCELLED
+                        'সব ইনভয়েস' => route('invoices'),
+                        'পরিশোধকৃত ইনভয়েস' => route('invoices') . "?status=" . \App\Models\Invoice::STATUS_PAID,
+                        'বাকি ইনভয়েস' => route('invoices') . "?status=" . \App\Models\Invoice::STATUS_UNPAID,
+                        'আংশিক পরিশোধ ইনভয়েস' => route('invoices') . "?status=" . \App\Models\Invoice::STATUS_PARTIAL_PAID,
+                        'বাতিল করা ইনভয়েস' => route('invoices') . "?status=" . \App\Models\Invoice::STATUS_CANCELLED
                     ]
                 ],
-                'Statistics' => [
+                'হিসাব' => [
                     'i' => 'pie-chart',
                     'r' => route('statistics')
                 ],
-                'Employees' => [
+                'কর্মচারী' => [
                     'i' => 'user',
                     'r' => [
-                        'All Employees' => route('employees'),
-                        'Active Employees' => route('employees') . "?status=" . \App\Models\Employee::STATUS_ACTIVE,
-                        'Pending Employees' => route('employees') . "?status=" . \App\Models\Employee::STATUS_PENDING,
-                        'Create Employee' => route('employees.create')
+                        'সব কর্মচারী' => route('employees'),
+                        'সক্রিয় কর্মচারী ' => route('employees') . "?status=" . \App\Models\Employee::STATUS_ACTIVE,
+                        'অপেক্ষমান কর্মচারী' => route('employees') . "?status=" . \App\Models\Employee::STATUS_PENDING,
+                        'কর্মচারী তৈরি করুন' => route('employees.create')
                     ]
                 ],
-                'Jobs' => [
+                'কর্মচারীর কাজ' => [
                     'i' => 'briefcase',
                     'r' => [
-                        'All Jobs' => route('jobs'),
-                        'Completed Jobs' => route('jobs') . "?status=" . \App\Models\Job::STATUS_DONE,
-                        'Pending Jobs' => route('jobs') . "?status=" . \App\Models\Job::STATUS_PENDING,
-                        'Cancelled Jobs' => route('jobs') . "?status=" . \App\Models\Job::STATUS_CANCELLED,
-                        'Create Job' => route('jobs.create')
+                        'সব কাজ' => route('jobs'),
+                        'সম্পন্ন কাজ' => route('jobs') . "?status=" . \App\Models\Job::STATUS_DONE,
+                        'অপেক্ষমান কাজ' => route('jobs') . "?status=" . \App\Models\Job::STATUS_PENDING,
+                        'বাতিল কাজ' => route('jobs') . "?status=" . \App\Models\Job::STATUS_CANCELLED,
+                        'কাজ তৈরী করুন' => route('jobs.create')
                     ]
                 ],
-                'Send SMS' => [
+                'এসএমএস পাঠান' => [
                     'i' => 'email',
                     'r' => route('sms.create')
                 ],
-                'Profile' => [
+                'আমার প্রোফাইল' => [
                     'i' => 'settings',
                     'r' => [
-                        'Edit Profile' => route('profile'),
-                        'Change Password' => route('profile.changePassword'),
-                        'Change PIN' => route('profile.changePin')
+                        'প্রোফাইল পরিবর্তন' => route('profile'),
+                        'পাসওয়ার্ড পরিবর্তন' => route('profile.changePassword'),
+                        'পিন পরিবর্তন' => route('profile.changePin')
                     ]
                 ],
-                'Logout' => [
+                'বের হয়ে যান' => [
                     'i' => 'close',
                     'r' => route('logout')
                 ],
@@ -327,7 +327,7 @@
             <div id="sidebar-menu">
                 <!-- Left Menu Start -->
                 <ul class="metismenu list-unstyled" id="side-menu">
-                    <li class="menu-title">Main</li>
+                    <li class="menu-title">মূল মেনু</li>
 
                     @foreach($_nav_links as $k => $l)
                         @if (is_array($l['r']))
@@ -368,10 +368,10 @@
             <div class="container-fluid">
                 <div class="row mt-2">
                     <a href="javascript:history.back()" class="btn btn-secondary">
-                        <i class="ti-arrow-left"></i> Go Back
+                        <i class="ti-arrow-left"></i> ফিরে যান
                     </a>
                     <a href="javascript:history.forward()" class="btn btn-secondary ml-2">
-                        Go Forward <i class="ti-arrow-right"></i>
+                        সামনে যান <i class="ti-arrow-right"></i>
                     </a>
                 </div>
                 @yield('content')

@@ -56,7 +56,7 @@ class CustomerController extends Controller
 
             $customers = $customers
                 ->orderBy('id', 'DESC')
-                ->paginate(20, ['*'], 'page', $request->page ?? 1);
+                ->paginate($request->per_page ?? 20, ['*'], 'page', $request->page ?? 1);
 
             $customers->data = $customers->each(function ($c) {
                 $c->dues = $c->invoices()->whereIn('status', [\App\Models\Invoice::STATUS_UNPAID, \App\Models\Invoice::STATUS_PARTIAL_PAID])->sum('due');
