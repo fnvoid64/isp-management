@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Invoice;
 use App\Models\User;
 use Illuminate\Console\Command;
 
@@ -42,9 +43,15 @@ class GenerateInvoices extends Command
         $user = User::where(['email' => 'somor@softmight.com'])->first();
 
         if ($user) {
-            $customers = $user->customers()->where('mobile', 'not like', "%1998811%");
+            $customers = $user->customers();
+            $customers_wmobile = $customers->where('mobile', 'not like', "%1998811%");
 
-            print $customers->count();
+            foreach ($customers->get() as $customer) {
+                foreach ($customers->invoices()->where('status', '!=', Invoice::STATUS_PAID)->get() as $invoice) {
+                    $invoice->status = Invoice::STATUS_CANCELLED;
+                    $invoice->save();
+                }
+            }
         }
     }
 }
