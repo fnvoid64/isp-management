@@ -42,7 +42,7 @@ class GenerateInvoices extends Command
         $user = User::where(['email' => 'somor@softmight.com'])->first();
 
         if ($user) {
-            $customers = $user->customers()->where('mobile', 'not like', "%1998811");
+            $customers = $user->customers()->where('mobile', 'not like', "%1998811%");
 
             print $customers->count();
         }
