@@ -50,6 +50,7 @@ class GenerateInvoices extends Command
                 foreach ($customer->invoices()->where('status', '!=', Invoice::STATUS_PAID)->get() as $invoice) {
                     $invoice->status = Invoice::STATUS_CANCELLED;
                     $invoice->save();
+                    print $invoice->id . PHP_EOL;
                 }
             }
         }
