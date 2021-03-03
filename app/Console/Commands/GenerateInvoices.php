@@ -47,7 +47,7 @@ class GenerateInvoices extends Command
             $customers_wmobile = $customers->where('mobile', 'not like', "%1998811%");
 
             foreach ($customers->get() as $customer) {
-                foreach ($customers->invoices()->where('status', '!=', Invoice::STATUS_PAID)->get() as $invoice) {
+                foreach ($customer->invoices()->where('status', '!=', Invoice::STATUS_PAID)->get() as $invoice) {
                     $invoice->status = Invoice::STATUS_CANCELLED;
                     $invoice->save();
                 }
