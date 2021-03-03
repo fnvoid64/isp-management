@@ -30,7 +30,7 @@ class DashboardController extends Controller
         $data = new \stdClass();
         $data->customer_count = $user->customers()->count();
         $data->total_revenue = round($user->payments()->sum('amount'), 2);
-        $data->total_dues = round($user->invoices()->sum('due'), 2);
+        $data->total_dues = round($user->invoices()->where('status', '!=', Invoice::STATUS_CANCELLED)->sum('due'), 2);
         $data->package_count = $user->packages()->count();
         $data->this_month_rev = round($user->payments()->whereBetween('created_at', $this_month)->sum('amount'), 2);
         $data->last_month_rev = round($user->payments()->whereBetween('created_at', $last_month)->sum('amount'), 2);
