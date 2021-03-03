@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class GenerateInvoices extends Command
@@ -44,15 +46,35 @@ class GenerateInvoices extends Command
 
         if ($user) {
             $customers = $user->customers();
-            $customers_wmobile = $customers->where('mobile', 'not like', "%1998811%");
+            //$customers_wmobile = $customers->where('mobile', 'not like', "%1998811%");
 
-            //foreach ($customers->get() as $customer) {
-                foreach ($user->invoices()->get() as $invoice) {
-                    $invoice->status = Invoice::STATUS_CANCELLED;
-                    $invoice->save();
-                    print $invoice->id . PHP_EOL;
+            foreach ($customers->get() as $customer) {
+                $customer->status = Customer::STATUS_ACTIVE;
+
+                $amount = 0;
+                $packages = [];
+
+                foreach ($customer->packages()->get() as $package) {
+                    $packages[] = $package->id;
+                    $amount += $package->sale_price;
                 }
-            //}
+
+                $jan_invoice = $customer->invoices()->create([
+                    'user_id' => $user->id,
+                    'amount' => $amount,
+                    'due' => $amount,
+                    'package_ids' => implode(",", $packages),
+                    'created_at' => new Carbon('30-01-2021')
+                ]);
+
+                $feb_invoice = $customer->invoices()->create([
+                    'user_id' => $user->id,
+                    'amount' => $amount,
+                    'due' => $amount,
+                    'package_ids' => implode(",", $packages),
+                    'created_at' => new Carbon('last day of last month')
+                ]);
+            }
         }
     }
 }
