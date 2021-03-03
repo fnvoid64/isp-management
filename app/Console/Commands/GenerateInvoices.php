@@ -42,7 +42,7 @@ class GenerateInvoices extends Command
     public function handle()
     {
         // Generate invoice for Somor only
-        $user = User::where(['email' => 'somor@softmight.com'])->first();
+        /**$user = User::where(['email' => 'somor@softmight.com'])->first();
 
         if ($user) {
             $customers = $user->customers();
@@ -96,8 +96,8 @@ class GenerateInvoices extends Command
                     'due' => $amount,
                     'package_ids' => implode(",", $packages),
                     'created_at' => new Carbon('last day of last month')
-                ]);**/
+                ]);
             }
-        }
+        }**/
     }
 }
