@@ -49,8 +49,8 @@ class GenerateInvoices extends Command
             //$customers_wmobile = $customers->where('mobile', 'not like', "%1998811%");
 
             foreach ($customers->get() as $customer) {
-                $customer->status = Customer::STATUS_ACTIVE;
-                $customer->save();
+                //$customer->status = Customer::STATUS_ACTIVE;
+                //$customer->save();
 
                 // Send SMS
 
