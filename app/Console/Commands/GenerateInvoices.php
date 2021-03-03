@@ -50,8 +50,31 @@ class GenerateInvoices extends Command
 
             foreach ($customers->get() as $customer) {
                 $customer->status = Customer::STATUS_ACTIVE;
+                $customer->save();
 
-                $amount = 0;
+                // Send SMS
+
+                if (stristr($customer->mobile, '1998811') === FALSE) {
+                    $total = 0;
+
+                    foreach ($customer->invoices()->where('status', Invoice::STATUS_UNPAID)->get() as $invoice) {
+                        $total += $invoice->due;
+                    }
+
+                    $message = 'গ্রাহক: ' . $customer->name . ', জানুয়ারি ও ফেব্রুয়ারি মিলে বাকি: ' . round($total, 2) . ' টাকা। দয়া করে পরিশোধ করুন।';
+                    $message .= PHP_EOL . 'ধন্যবাদ, এসবি ক্যাবল নেটওয়ার্ক।';
+                    
+                    $api = "http://sms.publicia.net/sms/api?action=send-sms&api_key=SmdhS0lmaWNNcWQ9PUJCcUVpSWk=&to=880$customer->mobile&sms=" . urlencode($message) . "&unicode=1";
+                    $data = json_decode(file_get_contents($api));
+
+                    if ($data->code == 'ok') {
+                        print $customer->mobile . " ok" . PHP_EOL;
+                    } else {
+                        print $customer->mobile . " error" . PHP_EOL;
+                    }
+                }
+
+                /**$amount = 0;
                 $packages = [];
 
                 foreach ($customer->packages()->get() as $package) {
@@ -73,7 +96,7 @@ class GenerateInvoices extends Command
                     'due' => $amount,
                     'package_ids' => implode(",", $packages),
                     'created_at' => new Carbon('last day of last month')
-                ]);
+                ]);**/
             }
         }
     }
