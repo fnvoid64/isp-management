@@ -46,13 +46,13 @@ class GenerateInvoices extends Command
             $customers = $user->customers();
             $customers_wmobile = $customers->where('mobile', 'not like', "%1998811%");
 
-            foreach ($customers->get() as $customer) {
-                foreach ($customer->invoices()->get() as $invoice) {
+            //foreach ($customers->get() as $customer) {
+                foreach ($user->invoices()->get() as $invoice) {
                     $invoice->status = Invoice::STATUS_CANCELLED;
                     $invoice->save();
                     print $invoice->id . PHP_EOL;
                 }
-            }
+            //}
         }
     }
 }
