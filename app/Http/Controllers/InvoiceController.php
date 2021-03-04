@@ -125,6 +125,10 @@ class InvoiceController extends Controller
         $invoice->payments()->attach($payment);
         $invoice->save();
 
+        $message = "Customer: {$invoice->customer->id}\nAmount: Tk. {$payment->amount}\nBill Months: #{$invoice->created_at->format('F')}\nThanks, SB Cable Network.";
+        $api = "http://sms.publicia.net/sms/api?action=send-sms&api_key=SmdhS0lmaWNNcWQ9PUJCcUVpSWk=&to=880$invoice->customer->mobile&sms=" . urlencode($message);
+        $data = json_decode(file_get_contents($api));
+
         return redirect()
             ->back()
             ->with('message', "Payment for Invoice #$invoice->id was successful! " . '<a href="' . route($employee ? 'employee_payments.print' : 'payments.print', ['payment' => $payment->id]) .'" class="btn btn-primary btn-sm">Print</a>');

@@ -317,6 +317,8 @@ class CustomerController extends Controller
                     'status' => $employee ? Payment::STATUS_PENDING : Payment::STATUS_CONFIRMED
                 ]);
 
+                $months = [];
+
                 // Mark Invoice
                 foreach ($invoices->get() as $invoice) {
                     if ($paidAmount > 0) {
@@ -332,8 +334,14 @@ class CustomerController extends Controller
 
                         $invoice->payments()->attach($payment);
                         $invoice->save();
+                        $months[] = $invoice->created_at->format('M');
                     }
                 }
+
+                $months = implode(", ", $months);
+                $message = "Customer: {$customer->id}\nAmount: Tk. {$request->amount}\nBill Months: #{$months}\nThanks, SB Cable Network.";
+                $api = "http://sms.publicia.net/sms/api?action=send-sms&api_key=SmdhS0lmaWNNcWQ9PUJCcUVpSWk=&to=880$customer->mobile&sms=" . urlencode($message);
+                $data = json_decode(file_get_contents($api));
 
                 return redirect()
                     ->back()
