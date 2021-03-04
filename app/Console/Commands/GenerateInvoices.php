@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Customer;
 use App\Models\Invoice;
+use App\Models\Package;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -43,37 +44,35 @@ class GenerateInvoices extends Command
     {
         // Generate invoice for Somor only
         $user = User::where(['email' => 'somor@softmight.com'])->first();
-        $i = 0;
+
         foreach ($user->customers()->get() as $customer) {
             if ($customer->packages()->count() == 0) {
-                $i++;
-            }
-            /**$amount = 0;
-            $packages = [];
+                $amount = 0;
+                $packages = [];
 
-            foreach ($customer->packages()->get() as $package) {
+                $package = Package::find(31);
+
                 $packages[] = $package->id;
                 $amount += $package->sale_price;
+                $customer->packages()->attach($package);
+
+                $jan_invoice = $customer->invoices()->create([
+                    'user_id' => $user->id,
+                    'amount' => $amount,
+                    'due' => $amount,
+                    'package_ids' => implode(",", $packages),
+                    'created_at' => new Carbon('30-01-2021')
+                ]);
+
+                $feb_invoice = $customer->invoices()->create([
+                    'user_id' => $user->id,
+                    'amount' => $amount,
+                    'due' => $amount,
+                    'package_ids' => implode(",", $packages),
+                    'created_at' => new Carbon('last day of last month')
+                ]);
             }
-
-            $jan_invoice = $customer->invoices()->create([
-                'user_id' => $user->id,
-                'amount' => $amount,
-                'due' => $amount,
-                'package_ids' => implode(",", $packages),
-                'created_at' => new Carbon('30-01-2021')
-            ]);
-
-            $feb_invoice = $customer->invoices()->create([
-                'user_id' => $user->id,
-                'amount' => $amount,
-                'due' => $amount,
-                'package_ids' => implode(",", $packages),
-                'created_at' => new Carbon('last day of last month')
-            ]);**/
-
         }
-        print $i . PHP_EOL;
         /**if ($user) {
             $customers = $user->customers();
             //$customers_wmobile = $customers->where('mobile', 'not like', "%1998811%");
