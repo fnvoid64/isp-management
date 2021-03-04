@@ -59,7 +59,7 @@
                                 </div>
                                 <div class="detail">
                                     <div class="detail-label">Connection Point</div>
-                                    <div class="detail-value">{{ $customer->connection_point->name }}</div>
+                                    <div class="detail-value">{{ $customer->connection_point->name ?? 'N/A' }}</div>
                                 </div>
                                 <div class="detail">
                                     <div class="detail-label">Address</div>
