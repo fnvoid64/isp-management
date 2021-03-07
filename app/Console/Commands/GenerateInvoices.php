@@ -45,13 +45,27 @@ class GenerateInvoices extends Command
         // Generate invoice for Somor only
         $user = User::where(['email' => 'somor@softmight.com'])->first();
         $p_customers = $user->packages()->where(['type' => Package::TYPE_BROADBAND])->get();
-        $customers = [];
 
         foreach ($p_customers as $p) {
-            $customers = [...$customers, ...$p->customers()->get()];
-        }
+            foreach ($p->customers()->get() as $customer) {
+                $amount = 0;
+                $packages = [];
 
-        print count($customers) . PHP_EOL;
+                foreach ($customer->packages()->get() as $package) {
+                    $packages[] = $package->id;
+                    $amount += $package->sale_price;
+                }
+
+                $invoice = $customer->invoices()->create([
+                    'user_id' => $user->id,
+                    'amount' => $amount,
+                    'due' => $amount,
+                    'package_ids' => implode(",", $packages),
+                    'created_at' => new Carbon('first day of this month')
+                ]);
+                print "#$customer->id: $invoice->id" . PHP_EOL;
+            }
+        }
 
         /**foreach ($user->customers()->get() as $customer) {
             if ($customer->packages()->count() == 0) {
