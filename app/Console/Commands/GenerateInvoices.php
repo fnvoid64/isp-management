@@ -48,7 +48,7 @@ class GenerateInvoices extends Command
         $customers = [];
 
         foreach ($p_customers as $p) {
-            $customers = [...$p->customers()->get()];
+            $customers = [...$customers, ...$p->customers()->get()];
         }
 
         print count($customers) . PHP_EOL;
