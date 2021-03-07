@@ -339,7 +339,7 @@ class CustomerController extends Controller
                 }
 
                 $months = implode(", ", $months);
-                $message = "Customer ID: #{$customer->id}\nAmount: Tk. {$request->amount}\nBill Months: {$months}\nThanks, SB Cable Network.";
+                $message = "-- Bill Paid --\nCustomer ID: #{$customer->id}\nAmount: Tk. {$request->amount}\nBill Months: {$months}\nThanks, Somor Kapali Biswas.";
                 $api = "http://sms.publicia.net/sms/api?action=send-sms&api_key=SmdhS0lmaWNNcWQ9PUJCcUVpSWk=&to=880$customer->mobile&sms=" . urlencode($message);
                 $data = json_decode(file_get_contents($api));
 
