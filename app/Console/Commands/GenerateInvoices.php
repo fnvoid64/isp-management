@@ -43,9 +43,17 @@ class GenerateInvoices extends Command
     public function handle()
     {
         // Generate invoice for Somor only
-        /**$user = User::where(['email' => 'somor@softmight.com'])->first();
+        $user = User::where(['email' => 'somor@softmight.com'])->first();
+        $p_customers = $user->packages()->where(['type' => Package::TYPE_BROADBAND])->get();
+        $customers = [];
 
-        foreach ($user->customers()->get() as $customer) {
+        foreach ($p_customers as $p) {
+            $customers = [...$p->customers()->get()];
+        }
+
+        print count($customers) . PHP_EOL;
+
+        /**foreach ($user->customers()->get() as $customer) {
             if ($customer->packages()->count() == 0) {
                 $amount = 0;
                 $packages = [];
