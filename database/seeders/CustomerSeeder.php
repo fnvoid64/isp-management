@@ -32,7 +32,7 @@ class CustomerSeeder extends Seeder
         $connectionPoints = ConnectionPoint::factory()->count(200)->create();
         $packages = Package::factory()->count(30)->create();
 
-        $customers = Customer::factory()->count(200)->create()->each(function ($customer) use ($packages) {
+        $customers = Customer::factory()->count(2000)->create()->each(function ($customer) use ($packages) {
             $packages = $packages->random()->take(mt_rand(1, 3))->get();
             $customer->packages()->attach($packages);
         });

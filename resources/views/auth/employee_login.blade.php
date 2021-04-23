@@ -29,19 +29,19 @@
     </script>
 </head>
 
-<body>
-<div class="account-pages my-5 pt-5">
+<body class="bg-success">
+<div class="account-pages my-5 pt-5 bg-success">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-6 col-xl-5">
                 <div class="card overflow-hidden">
-                    <div class="bg-primary">
-                        <div class="text-primary text-center p-4">
+                    <div class="bg-dark" style="outline: none">
+                        <div class="text-success text-center p-4">
                             <h5 class="text-white font-size-20">Welcome Back !</h5>
                             <p class="text-white-50">Sign in to continue to dashboard.</p>
-                            <a href="/" class="logo logo-admin">
+                            <p class="logo logo-admin">
                                 <i class="fa fa-lock fa-2x text-success"></i>
-                            </a>
+                            </p>
                         </div>
                     </div>
 
@@ -63,7 +63,7 @@
                                 </div>
 
                                 <div class="form-group text-center">
-                                    <button class="btn btn-primary btn-block w-md waves-effect waves-light" type="submit">Log In</button>
+                                    <button class="btn btn-success btn-block w-md waves-effect waves-light" type="submit">Log In</button>
                                 </div>
                             </form>
                         </div>

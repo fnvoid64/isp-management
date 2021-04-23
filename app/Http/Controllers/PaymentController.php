@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\Payment;
+use App\Models\Printer;
+use App\Models\Package;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
@@ -130,6 +132,55 @@ class PaymentController extends Controller
 
     public function printOutEm(Payment $payment)
     {
-        return $this->printOut($payment, Employee::getEmployee());
+        $printer = Printer::where('is_default', true)->first();
+        $employee = Employee::getEmployee();
+
+
+        $data = [];
+        $data['func'] = 'print';
+        $data['printer'] = [
+            'name' => $printer->name,
+            'type' => $printer->type,
+            'address' => $printer->address
+        ];
+
+        $bills = [];
+        $packages = '';
+
+        foreach ($payment->invoices()->get() as $invoice) {
+            if ($payment->amount >= $invoice->amount) {
+                $paid = $invoice->amount - $invoice->due;
+            } else {
+                $paid = ($invoice->amount - $invoice->due) - $payment->amount;
+            }
+
+            $bill = [
+                'month' => $invoice->created_at->format('F'),
+                'paid' => round($paid),
+                'due' => round($invoice->due, 2)
+            ];
+            $bills[] = $bill;
+
+            $packages = implode(", ", Package::whereIn('id', explode(',', $invoice->package_ids))->get()->pluck('name')->toArray());
+        }
+
+        $data['ticket'] = [
+            'logo' => $employee->user->company ?? 'SB Cable',
+            'address' => $employee->user->address ?? 'Shoilmary Bazar',
+            'mobile' => $employee->user->mobile,
+            'clientId' => '#' . $payment->customer->id,
+            'packages' => $packages,
+            'method' => $payment->type == Payment::TYPE_CASH ? 'Cash' : ($payment->type == Payment::TYPE_BANK ? 'Bank' : 'Bkash/Rocket'),
+            'bills' => $bills,
+            'totalAmount' => $payment->amount,
+            'dueAmount' => $payment->customer->invoices()->whereIn('status', [\App\Models\Invoice::STATUS_UNPAID, \App\Models\Invoice::STATUS_PARTIAL_PAID])->sum('due'),
+            'collector' => $employee->name,
+            'qrData' => $payment->id
+        ];
+
+        $data = base64_encode(json_encode($data));
+        return redirect('cmsd://print_receipt?data=' . $data);
+
+        //return $this->printOut($payment, Employee::getEmployee());
     }
 }

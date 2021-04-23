@@ -111,7 +111,7 @@ class InvoiceController extends Controller
             'customer_id' => $invoice->customer->id,
             'amount' => $request->amount,
             'type' => $request->type,
-            'status' => Payment::STATUS_CONFIRMED
+            'status' => $employee ? Payment::STATUS_PENDING : Payment::STATUS_CONFIRMED
         ]);
 
         if ($request->amount == $invoice->due) {
@@ -126,8 +126,8 @@ class InvoiceController extends Controller
         $invoice->save();
 
         $message = "Customer: {$invoice->customer->id}\nAmount: Tk. {$payment->amount}\nBill Months: #{$invoice->created_at->format('F')}\nThanks, SB Cable Network.";
-        $api = "http://sms.publicia.net/sms/api?action=send-sms&api_key=SmdhS0lmaWNNcWQ9PUJCcUVpSWk=&to=880$invoice->customer->mobile&sms=" . urlencode($message);
-        $data = json_decode(file_get_contents($api));
+        //$api = "http://sms.publicia.net/sms/api?action=send-sms&api_key=SmdhS0lmaWNNcWQ9PUJCcUVpSWk=&to=880$invoice->customer->mobile&sms=" . urlencode($message);
+        //$data = json_decode(file_get_contents($api));
 
         return redirect()
             ->back()

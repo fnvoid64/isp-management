@@ -42,4 +42,9 @@ class Employee extends Model
     {
         static::$employee = static::findOrFail($employee_id);
     }
+
+    public function printers()
+    {
+        return $this->hasMany(Printer::class);
+    }
 }

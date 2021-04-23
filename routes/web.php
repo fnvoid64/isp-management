@@ -18,6 +18,8 @@ Route::get('/', function () {
     return redirect(route('login'));
 });
 
+Route::get('/app_printers/add', [\App\Http\Controllers\PrinterController::class, 'store']);
+
 
 Route::middleware('auth')->prefix('/dashboard')->group(function () {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
@@ -247,4 +249,5 @@ Route::middleware('employee.auth')->prefix('/dashboard_v2')->group(function () {
         ->name('employee_jobs.show');
     Route::post('/jobs/{job}/markComplete', [\App\Http\Controllers\JobController::class, 'markCompleted'])
         ->name('employee_jobs.markComplete');
+    Route::get('/printers', [\App\Http\Controllers\PrinterController::class, 'index'])->name("printers");
 });
