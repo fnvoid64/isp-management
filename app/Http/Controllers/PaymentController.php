@@ -165,7 +165,7 @@ class PaymentController extends Controller
             ];
             $bills[] = $bill;
 
-            $packages = implode(", ", Package::whereIn('id', explode(',', $invoice->package_ids))->get()->pluck('name')->toArray());
+            $packages = 'Package: #' . implode(", #", Package::whereIn('id', explode(',', $invoice->package_ids))->get()->pluck('id')->toArray());
         }
 
         $data['ticket'] = [
