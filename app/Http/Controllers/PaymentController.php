@@ -174,7 +174,7 @@ class PaymentController extends Controller
             'bills' => $bills,
             'totalAmount' => $payment->amount,
             'dueAmount' => $payment->customer->invoices()->whereIn('status', [\App\Models\Invoice::STATUS_UNPAID, \App\Models\Invoice::STATUS_PARTIAL_PAID])->sum('due'),
-            'collector' => $employee->name,
+            'collector' => $payment->employee_id ? $payment->employee->name : $employee->user->name . ' (Admin)',
             'qrData' => $payment->id
         ];
 
