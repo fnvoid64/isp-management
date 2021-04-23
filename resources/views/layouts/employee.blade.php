@@ -24,7 +24,7 @@
         z-index: 999;
     }
     .container {
-        margin-top: 70px;
+        margin-top: 95px;
         margin-bottom: 55px;
     }
     .no-js #loader { display: none;  }
