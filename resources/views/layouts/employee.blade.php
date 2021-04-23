@@ -7,8 +7,6 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-    <script src="/assets/libs/jquery/jquery.min.js"></script>
     
     <style>
     .btm-nav {
@@ -29,13 +27,29 @@
         margin-top: 70px;
         margin-bottom: 55px;
     }
+    .no-js #loader { display: none;  }
+    .js #loader { display: block; position: absolute; left: 100px; top: 0; }
+    .se-pre-con {
+        position: fixed;
+        left: 0px;
+        top: 0px;
+        width: 100%;
+        height: 100%;
+        z-index: 999999;
+        background: url(/assets/images/loader2.gif) center no-repeat #fff;
+    }
     </style>
+    
     @yield('styles')
     <link href="/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
-
+    <script src="/assets/libs/jquery/jquery.min.js"></script>
+    
     <script src="/assets/libs/sweetalert2/sweetalert2.min.js"></script>
 
     <script>
+        $(window).on('load', function() {
+            $(".se-pre-con").fadeOut("slow");
+        });
         function showAlertMsg(msg, type = 'success') {
             Swal.fire({
                 type: type,
@@ -47,8 +61,9 @@
 </head>
 
 <body>
+<div class="se-pre-con"></div>
 @php $employee = \App\Models\Employee::getEmployee(); $user= $employee->user; @endphp
-<nav class="navbar-fixed teal lighten-1" style="position: fixed; top: 0; leeft: 0; z-index: 999">
+<nav class="navbar-fixed teal lighten-1" style="position: fixed; top: 0; leeft: 0; z-index: 999; padding-top: 23px; height: 75px;">
     <div class="nav-wrapper">
         <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
         <a href="#!" class="brand-logo">CMSDust</a>
@@ -61,15 +76,15 @@
 </nav>
 
 <div class="btm-nav teal lighten-2">
-<a href="javascript:history.back();" class="btn waves-effect waves-light" type="button">
-<i class="material-icons">chevron_left</i>
-</a>
-<a href="{{ route('dashboard_v2') }}" class="btn waves-effect waves-light" type="button">
-    <i class="material-icons left">home</i> Home
-</a>
-<a href="javascript:history.forward()" class="btn waves-effect waves-light" type="button">
-    <i class="material-icons">chevron_right</i>
-</a>
+    <a href="javascript:history.back();" class="btn waves-effect waves-light" type="button">
+    <i class="material-icons">chevron_left</i>
+    </a>
+    <a href="{{ route('dashboard_v2') }}" class="btn waves-effect waves-light" type="button">
+        <i class="material-icons left">home</i> Home
+    </a>
+    <a href="javascript:history.forward()" class="btn waves-effect waves-light" type="button">
+        <i class="material-icons">chevron_right</i>
+    </a>
 </div>
 
 <ul id="slide-out" class="sidenav">

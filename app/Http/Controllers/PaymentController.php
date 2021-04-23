@@ -151,7 +151,11 @@ class PaymentController extends Controller
             if ($payment->amount >= $invoice->amount) {
                 $paid = $invoice->amount - $invoice->due;
             } else {
-                $paid = ($invoice->amount - $invoice->due) - $payment->amount;
+                $paid = ($invoice->amount - $invoice->due);
+                
+                if ($paid > $payment->amount) {
+                    $paid = $paid - $payment->amount;
+                }
             }
 
             $bill = [
