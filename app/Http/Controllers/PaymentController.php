@@ -153,7 +153,7 @@ class PaymentController extends Controller
             } else {
                 $paid = ($invoice->amount - $invoice->due);
                 
-                if ($paid > $payment->amount) {
+                if ($paid >= $payment->amount) {
                     $paid = $paid - $payment->amount;
                 }
             }
