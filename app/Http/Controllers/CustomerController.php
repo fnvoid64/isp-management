@@ -36,6 +36,7 @@ class CustomerController extends Controller
                 $customers = $package->customers();
             }
 
+
             if ($request->filled('searchQuery') && $request->searchQuery != '0') {
                 $request->searchQuery = ltrim($request->searchQuery, '0');
                 $customers->where('name', 'ilike', '%' . $request->searchQuery . '%')
@@ -54,9 +55,28 @@ class CustomerController extends Controller
                 $customers = $customers->where('connection_point_id', $request->connectionPoint);
             }
 
-            $customers = $customers
-                ->orderBy('id', 'DESC')
-                ->paginate($request->per_page ?? 20, ['*'], 'page', $request->page ?? 1);
+            if ($request->filled('p_type')) {
+                //dd($request->p_type);
+                $packages = $user->packages()->where('packages.type', intval($request->p_type))->get();
+
+                $customers = null;
+
+                foreach ($packages as $p) {
+                    if ($customers) {
+                        $customers = $p->customers()->orderBy('id', 'DESC')->get()->merge($customers);
+                    } else {
+                        $customers = $p->customers()->get();
+                        //dd($customers);
+                    }
+                }
+
+                //dd(count($customers));
+            } else {
+                $customers = $customers
+                    ->orderBy('id', 'DESC')
+                    ->paginate($request->per_page ?? 20, ['*'], 'page', $request->page ?? 1);
+            }
+            
 
             $customers->data = $customers->each(function ($c) {
                 $c->dues = $c->invoices()->whereIn('status', [\App\Models\Invoice::STATUS_UNPAID, \App\Models\Invoice::STATUS_PARTIAL_PAID])->sum('due');

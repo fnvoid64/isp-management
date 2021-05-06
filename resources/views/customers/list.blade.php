@@ -96,6 +96,46 @@
                     </div>
                 </div>
                 <div class="card-body">
+                    @if ($request->filled('p_type'))
+                    <div v-if="items">
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="table">
+                                <thead>
+                                <th>#ID</th>
+                                <th>নাম</th>
+                                <th>মোবাইল নম্বর</th>
+                                <th>ঠিকানা</th>
+                                <th>অবস্থা</th>
+                                <th>বাকি</th>
+                                <th>অপশন</th>
+                                </thead>
+                                <tbody>
+                                <tr v-for="item in items" :key="item.id">
+                                    <td>#[[ item.id ]]</td>
+                                    <td>[[ item.name ]]</td>
+                                    <td>0[[ item.mobile ]]</td>
+                                    <td>[[ item.address ]]</td>
+                                    <td>
+                                        <span class="badge badge-success" v-if="item.status === {{ \App\Models\Customer::STATUS_ACTIVE }}">সক্রিয়</span>
+                                        <span class="badge badge-warning" v-if="item.status === {{ \App\Models\Customer::STATUS_PENDING }}">অপেক্ষমান</span>
+                                        <span class="badge badge-danger" v-if="item.status === {{ \App\Models\Customer::STATUS_DISABLED }}">বন্ধ</span>
+                                    </td>
+                                    <td>[[ item.dues ]] টাকা</td>
+                                    <td>
+                                        <a :href="`/dashboard/customers/${item.id}`">
+                                            <button class="btn btn-success btn-sm">দেখুন</button>
+                                        </a>
+                                        <a :href="`/dashboard/customers/${item.id}/edit`">
+                                            <button class="btn btn-primary btn-sm ml-1">পরিবর্তন</button>
+                                        </a>
+                                        <button class="btn btn-danger btn-sm ml-1" @click="deleteItem(item.id, item.name)">মুছুন</button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    @else
                     <div v-if="items && items.total !== 0">
                         <div class="table-responsive">
                             <table class="table table-striped" id="table">
@@ -148,6 +188,7 @@
                             </div>
                         </div>
                     </div>
+                    @endif
                     <div v-else>
                         কোনো তথ্য পাওয়া যায়নি।
                     </div>
@@ -184,6 +225,7 @@
                         area: '{{ $request->area }}',
                         connectionPoint: '{{ $request->connectionPoint }}',
                         package: '{{ $request->package }}',
+                        p_type: '{{ $request->p_type }}',
                         searchQuery: '{{ $request->searchQuery }}',
                         page: {{ $request->page ?? 1 }},
                     },

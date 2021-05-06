@@ -252,6 +252,9 @@
                     'i' => 'user',
                     'r' => [
                         'সব গ্রাহক' => route('customers'),
+                        'ব্রডব্যান্ড গ্রাহকরা' => route('customers') . "?p_type=" . \App\Models\Package::TYPE_BROADBAND,
+                        'কেবল টিভি গ্রাহকরা' => route('customers') . "?p_type=" . \App\Models\Package::TYPE_CABLE_TV,
+
                         'সক্রিয় গ্রাহকরা' => route('customers') . "?status=" . \App\Models\Customer::STATUS_ACTIVE,
                         'অপেক্ষমান গ্রাহকরা' => route('customers') . "?status=" . \App\Models\Customer::STATUS_PENDING,
                         'গ্রাহক তৈরি করুন' => route('customers.create')
