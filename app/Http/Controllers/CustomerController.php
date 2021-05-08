@@ -39,8 +39,8 @@ class CustomerController extends Controller
 
             if ($request->filled('searchQuery') && $request->searchQuery != '0') {
                 $request->searchQuery = ltrim($request->searchQuery, '0');
-                $customers->where('name', 'ilike', '%' . $request->searchQuery . '%')
-                    ->orWhere('mobile', 'ilike', '%' . $request->searchQuery . '%');
+                $customers->where('name', 'like', '%' . $request->searchQuery . '%')
+                    ->orWhere('mobile', 'like', '%' . $request->searchQuery . '%');
             }
 
             if ($request->filled('status')) {

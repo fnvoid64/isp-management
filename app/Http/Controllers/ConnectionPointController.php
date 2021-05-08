@@ -27,7 +27,7 @@ class ConnectionPointController extends Controller
 
             if ($request->filled('searchQuery') && $request->searchQuery != '0') {
                 $request->searchQuery = ltrim($request->searchQuery, '0');
-                $connectionPoints->where('name', 'ilike', '%' . $request->searchQuery . '%');
+                $connectionPoints->where('name', 'like', '%' . $request->searchQuery . '%');
             }
 
             $connectionPoints = $connectionPoints

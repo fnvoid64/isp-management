@@ -24,7 +24,7 @@ class PackageController extends Controller
 
             if ($request->filled('searchQuery') && $request->searchQuery != '0') {
                 $request->searchQuery = ltrim($request->searchQuery, '0');
-                $packages->where('name', 'ilike', '%' . $request->searchQuery . '%');
+                $packages->where('name', 'like', '%' . $request->searchQuery . '%');
             }
 
             if ($request->filled('type')) {

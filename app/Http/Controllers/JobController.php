@@ -29,8 +29,8 @@ class JobController extends Controller
 
             if ($request->filled('searchQuery') && $request->searchQuery != '0') {
                 $request->searchQuery = ltrim($request->searchQuery, '0');
-                $jobs->where('name', 'ilike', '%' . $request->searchQuery . '%')
-                    ->orWhere('body', 'ilike', '%' . $request->searchQuery . '%');
+                $jobs->where('name', 'like', '%' . $request->searchQuery . '%')
+                    ->orWhere('body', 'like', '%' . $request->searchQuery . '%');
             }
 
             if ($request->filled('status')) {

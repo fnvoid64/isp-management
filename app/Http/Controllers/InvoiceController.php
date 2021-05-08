@@ -34,7 +34,7 @@ class InvoiceController extends Controller
 
             if ($request->filled('searchQuery') && $request->searchQuery != '#') {
                 $request->searchQuery = ltrim($request->searchQuery, '#');
-                $invoices->where('id', 'ilike', '%' . $request->searchQuery . '%');
+                $invoices->where('id', 'like', '%' . $request->searchQuery . '%');
             }
 
             if ($request->filled('status')) {

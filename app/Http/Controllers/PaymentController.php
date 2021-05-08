@@ -40,7 +40,7 @@ class PaymentController extends Controller
 
             if ($request->filled('searchQuery') && $request->searchQuery != '#') {
                 $request->searchQuery = ltrim($request->searchQuery, '#');
-                $payments->where('id', 'ilike', '%' . $request->searchQuery . '%');
+                $payments->where('id', 'like', '%' . $request->searchQuery . '%');
             }
 
             if ($request->filled('type')) {

@@ -23,7 +23,7 @@ class AreaController extends Controller
 
             if ($request->filled('searchQuery') && $request->searchQuery != '0') {
                 $request->searchQuery = ltrim($request->searchQuery, '0');
-                $areas->where('name', 'ilike', '%' . $request->searchQuery . '%');
+                $areas->where('name', 'like', '%' . $request->searchQuery . '%');
             }
 
 
